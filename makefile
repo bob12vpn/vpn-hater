@@ -1,8 +1,8 @@
 LDLIBS += -lpcap
 
-all: tls-hello
+all: drop-packet
 
-tls-hello: headers.h log.h tls-hello.cpp
+drop-packet: headers.h log.h drop-packet.cpp
 
 clean:
-	rm -f tls-hello *.o
+	rm -f drop-packet *.o
