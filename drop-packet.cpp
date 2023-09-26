@@ -91,7 +91,8 @@ int main(int argc, char* argv[]) {
 		fwd->ip  = bwd->ip  = tcpPacket->ip;
 		fwd->tcp = bwd->tcp = tcpPacket->tcp;
 
-		PRINT_TCP(bwd);
+		//PRINT_TCP(fwd);
+		//PRINT_TCP(bwd);
 
 		for(int i=0; i<6; i++)
 			fwd->eth.src[i] = bwd->eth.src[i] = my_mac[i];
@@ -106,11 +107,23 @@ int main(int argc, char* argv[]) {
 		std::swap(bwd->tcp.seq_raw, bwd->tcp.ack_raw);
 		fwd->tcp.flags2 = bwd->tcp.flags2 = TCP_FLAGS_RSTACK;
 
-		PRINT_TCP(bwd);
+		//PRINT_TCP(fwd);
+		//PRINT_TCP(bwd);
+
+		res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(&fwd), sizeof(_tcpPacket));
+		if(res != 0) {
+			fprintf(stderr, "pcap_sendpacket(%s) of fwd return null - %s\n", handle, errbuf);
+		}
+		res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(&bwd), sizeof(_tcpPacket));
+		if(res != 0) {
+			fprintf(stderr, "pcap_sendpacket(%s) of bwd return null - %s\n", handle, errbuf);
+		}
+
 		printf("========%d========\n", cnt);
 	}
 
 	delete tcpPacket;
+	pcap_close(pcap);
 	
 	return 0;
 }
