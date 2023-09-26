@@ -91,17 +91,21 @@ int main(int argc, char* argv[]) {
 		fwd->ip  = bwd->ip  = tcpPacket->ip;
 		fwd->tcp = bwd->tcp = tcpPacket->tcp;
 
-		for(int i=0; i<6; i++)
-			fwd->eth.src[i] = my_mac[i];
-		for(int i=0; i<6; i++)
-			bwd->eth.dst[i] = bwd->eth.src[i];
-		for(int i=0; i<6; i++)
-			bwd->eth.src[i] = my_mac[i];
+		PRINT_TCP(bwd);
 
-		fwd->ip.len = bwd->ip.len = IP_SIZE + fwd->tcp.hdr_len;
+		for(int i=0; i<6; i++)
+			fwd->eth.src[i] = bwd->eth.src[i] = my_mac[i];
+		for(int i=0; i<6; i++)
+			bwd->eth.dst[i] = tcpPacket->eth.src[i];
+
+		fwd->ip.len = bwd->ip.len = IP_SIZE + tcpPacket->tcp.hdr_len;
 		std::swap(bwd->ip.src, bwd->ip.dst);
 
-		PRINT_TCP(fwd);
+		std::swap(bwd->tcp.srcport, bwd->tcp.dstport);
+		fwd->tcp.seq_raw = bwd->tcp.seq_raw = tcpPacket->tcp.seq_raw + (tcpPacket->ip.len - IP_SIZE - tcpPacket->tcp.hdr_len);
+		std::swap(bwd->tcp.seq_raw, bwd->tcp.ack_raw);
+		fwd->tcp.flags2 = bwd->tcp.flags2 = TCP_FLAGS_RSTACK;
+
 		PRINT_TCP(bwd);
 		printf("========%d========\n", cnt);
 	}
