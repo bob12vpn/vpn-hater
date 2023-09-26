@@ -65,6 +65,7 @@ struct _tcp {
 };
 #define	TCP_DSTPORT_DNS	53
 #define TCP_DSTPORT_TLS 443
+#define TCP_FLAGS_ACK 0x10
 #define TCP_FLAGS_RSTACK 0x14
 
 
