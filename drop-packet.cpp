@@ -14,11 +14,13 @@
 #include <stdlib.h>
 #include <pcap.h>
 
+#pragma pack(push, 1)
 struct _tcpPacket final {
 	struct _eth eth;
 	struct _ip  ip;
 	struct _tcp tcp;
 };
+#pragma pack(pop)
 
 void usage() {
 	printf("usage: sudo ./drop-packet <interface>\n");
@@ -55,7 +57,7 @@ int main(int argc, char* argv[]) {
 	char* handle = argv[1];
 
 	char errbuf[PCAP_ERRBUF_SIZE];
-	pcap_t* pcap = pcap_open_live(handle, BUFSIZ, 1, 1000, errbuf);
+	pcap_t* pcap = pcap_open_live(handle, BUFSIZ, 1, 1, errbuf);
 	if(pcap == NULL) {
 		fprintf(stderr, "pcap_open_live(%s) return null - %s\n", handle, errbuf);
 		return -1;
@@ -91,6 +93,7 @@ int main(int argc, char* argv[]) {
 		fwd->ip  = bwd->ip  = tcpPacket->ip;
 		fwd->tcp = bwd->tcp = tcpPacket->tcp;
 
+
 		//PRINT_TCP(fwd);
 		//PRINT_TCP(bwd);
 
@@ -99,22 +102,34 @@ int main(int argc, char* argv[]) {
 		for(int i=0; i<6; i++)
 			bwd->eth.dst[i] = tcpPacket->eth.src[i];
 
-		fwd->ip.len = bwd->ip.len = IP_SIZE + tcpPacket->tcp.hdr_len;
+		uint16_t ip_size = tcpPacket->ip.hdr_len * 4;
+		uint16_t tcp_size = tcpPacket->tcp.hdr_len * 4;
+		fwd->ip.len = bwd->ip.len = ntohs(ip_size + tcp_size);
 		std::swap(bwd->ip.src, bwd->ip.dst);
+		bwd->ip.ttl = 128;
 
 		std::swap(bwd->tcp.srcport, bwd->tcp.dstport);
-		fwd->tcp.seq_raw = bwd->tcp.seq_raw = tcpPacket->tcp.seq_raw + (tcpPacket->ip.len - IP_SIZE - tcpPacket->tcp.hdr_len);
-		std::swap(bwd->tcp.seq_raw, bwd->tcp.ack_raw);
-		fwd->tcp.flags2 = bwd->tcp.flags2 = TCP_FLAGS_RSTACK;
+		uint16_t tcp_data_size = ntohs(tcpPacket->ip.len) - ip_size - tcp_size;
+		fwd->tcp.seq_raw = ntohl(tcpPacket->tcp.seq_raw + tcp_data_size);
+		bwd->tcp.seq_raw = tcpPacket->tcp.seq_raw;
+		fwd->tcp.flags2 |= TCP_FLAGS_RSTACK;
+		bwd->tcp.flags2 |= TCP_FLAGS_RSTACK;
 
 		//PRINT_TCP(fwd);
 		//PRINT_TCP(bwd);
+		PRINT(fwd->ip.version);
+		PRINT(fwd->ip.hdr_len);
+#ifdef DEBUG
+		printf("[VAR] size of tcpPacket struct : %lu\n", sizeof(_tcpPacket));
+#endif
 
-		res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(&fwd), sizeof(_tcpPacket));
+		res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(fwd), sizeof(_tcpPacket));
+		LOG("send forward packet");
 		if(res != 0) {
 			fprintf(stderr, "pcap_sendpacket(%s) of fwd return null - %s\n", handle, errbuf);
 		}
-		res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(&bwd), sizeof(_tcpPacket));
+		//res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(bwd), sizeof(_tcpPacket));
+		//LOG("send backward packet");
 		if(res != 0) {
 			fprintf(stderr, "pcap_sendpacket(%s) of bwd return null - %s\n", handle, errbuf);
 		}

@@ -7,18 +7,20 @@
 
 
 #define	ETH_SIZE	14
+#pragma pack(push, 1)
 struct _eth {
 	uint8_t  dst[6];
 	uint8_t  src[6];
 	uint16_t type;
 };
+#pragma pack(pop)
 #define	ETH_TYPE_IPV4	0x0800
 
 
 #define	IP_SIZE	20
 struct _ip {
-	uint8_t version:4,
-		hdr_len:4;
+	uint8_t hdr_len:4,
+		version:4;
 	uint8_t dsfield;
 	uint16_t len;
 	uint16_t id;
