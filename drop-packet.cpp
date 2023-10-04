@@ -115,6 +115,24 @@ int main(int argc, char* argv[]) {
 		fwd->tcp.flags2 |= TCP_FLAGS_RSTACK;
 		bwd->tcp.flags2 |= TCP_FLAGS_RSTACK;
 
+		// ip checksum
+		uint32_t tmp_sum = 0;
+		fwd->ip.checksum = 0;
+		for(int i=0; i<20; i+=2) {
+			tmp_sum += (*((uint8_t*)fwd + ETH_SIZE + i) << 8) + (*((uint8_t*)fwd + ETH_SIZE + i + 1));
+		}
+		tmp_sum += tmp_sum & 0xFFFF + tmp_sum >> 16;
+		fwd->ip.checksum = ntohs(~(uint16_t)tmp_sum);
+		
+		tmp_sum = 0;
+		bwd->ip.checksum = 0;
+		for(int i=0; i<20; i+=2) {
+			tmp_sum += (*((uint8_t*)bwd + ETH_SIZE + i) << 8) + (*((uint8_t*)bwd + ETH_SIZE + i + 1));
+		}
+		tmp_sum += tmp_sum & 0xFFFF + tmp_sum >> 16;
+		bwd->ip.checksum = ntohs(~(uint16_t)tmp_sum);
+
+
 		//PRINT_TCP(fwd);
 		//PRINT_TCP(bwd);
 		PRINT(fwd->ip.version);
@@ -128,8 +146,8 @@ int main(int argc, char* argv[]) {
 		if(res != 0) {
 			fprintf(stderr, "pcap_sendpacket(%s) of fwd return null - %s\n", handle, errbuf);
 		}
-		//res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(bwd), sizeof(_tcpPacket));
-		//LOG("send backward packet");
+		res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(bwd), sizeof(_tcpPacket));
+		LOG("send backward packet");
 		if(res != 0) {
 			fprintf(stderr, "pcap_sendpacket(%s) of bwd return null - %s\n", handle, errbuf);
 		}
