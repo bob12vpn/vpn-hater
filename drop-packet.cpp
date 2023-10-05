@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
 		for(int i=0; i<20; i+=2) {
 			tmp_sum += (*((uint8_t*)fwd + ETH_SIZE + i) << 8) + (*((uint8_t*)fwd + ETH_SIZE + i + 1));
 		}
-		tmp_sum += tmp_sum & 0xFFFF + tmp_sum >> 16;
+		tmp_sum += tmp_sum >> 16;
 		fwd->ip.checksum = ntohs(~(uint16_t)tmp_sum);
 		
 		tmp_sum = 0;
@@ -129,14 +129,12 @@ int main(int argc, char* argv[]) {
 		for(int i=0; i<20; i+=2) {
 			tmp_sum += (*((uint8_t*)bwd + ETH_SIZE + i) << 8) + (*((uint8_t*)bwd + ETH_SIZE + i + 1));
 		}
-		tmp_sum += tmp_sum & 0xFFFF + tmp_sum >> 16;
+		tmp_sum += tmp_sum >> 16;
 		bwd->ip.checksum = ntohs(~(uint16_t)tmp_sum);
 
 
 		//PRINT_TCP(fwd);
 		//PRINT_TCP(bwd);
-		PRINT(fwd->ip.version);
-		PRINT(fwd->ip.hdr_len);
 #ifdef DEBUG
 		printf("[VAR] size of tcpPacket struct : %lu\n", sizeof(_tcpPacket));
 #endif
