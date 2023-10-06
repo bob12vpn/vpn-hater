@@ -135,8 +135,8 @@ int main(int argc, char* argv[]) {
 		// tcp checksum
 		tmp_sum = 0;
 		fwd->tcp.checksum = 0;
-		tmp_sum += (fwd->ip.src >> 16) + (fwd->ip.src & 0xFFFF);
-		tmp_sum += (fwd->ip.dst >> 16) + (fwd->ip.dst & 0xFFFF);
+		tmp_sum += (ntohs(fwd->ip.src >> 16)) + (ntohs(fwd->ip.src & 0xFFFF));
+		tmp_sum += (ntohs(fwd->ip.dst >> 16)) + (ntohs(fwd->ip.dst & 0xFFFF));
 		tmp_sum += (fwd->ip.proto);
 		tmp_sum += tcp_size;
 		for(int i=0; i<tcp_size; i+=2) {
@@ -147,8 +147,8 @@ int main(int argc, char* argv[]) {
 
 		tmp_sum = 0;
 		bwd->tcp.checksum = 0;
-		tmp_sum += (bwd->ip.src >> 16) + (bwd->ip.src & 0xFFFF);
-		tmp_sum += (bwd->ip.dst >> 16) + (bwd->ip.dst & 0xFFFF);
+		tmp_sum += (ntohs(bwd->ip.src >> 16)) + (ntohs(bwd->ip.src & 0xFFFF));
+		tmp_sum += (ntohs(bwd->ip.dst >> 16)) + (ntohs(bwd->ip.dst & 0xFFFF));
 		tmp_sum += (bwd->ip.proto);
 		tmp_sum += tcp_size;
 		for(int i=0; i<tcp_size; i+=2) {
