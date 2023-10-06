@@ -2,6 +2,7 @@
 
 #include "headers.h"
 #include "log.h"
+#include "gtrace.h"
 
 // C++
 #include <fstream>
@@ -49,7 +50,7 @@ uint8_t* str2arrayMac(std::string mac_str) {
 }
 
 int main(int argc, char* argv[]) {
-	LOG("Debug mode is enabled");
+	GTRACE("Debug mode is enabled");
 	if(argc != 2) {
 		usage();
 		return -1;
@@ -164,12 +165,12 @@ int main(int argc, char* argv[]) {
 #endif
 
 		res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(fwd), sizeof(_tcpPacket));
-		LOG("send forward packet");
+		GTRACE("send forward packet");
 		if(res != 0) {
 			fprintf(stderr, "pcap_sendpacket(%s) of fwd return null - %s\n", handle, errbuf);
 		}
 		res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(bwd), sizeof(_tcpPacket));
-		LOG("send backward packet");
+		GTRACE("send backward packet");
 		if(res != 0) {
 			fprintf(stderr, "pcap_sendpacket(%s) of bwd return null - %s\n", handle, errbuf);
 		}
