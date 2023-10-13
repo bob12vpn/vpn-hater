@@ -115,37 +115,6 @@ int main(int argc, char* argv[]) {
 		fwd->tcp.checksum = fwd->tcp.calcTcpChecksum(&(fwd->ip), &(fwd->tcp));
 		bwd->tcp.checksum = bwd->tcp.calcTcpChecksum(&(bwd->ip), &(bwd->tcp));
 
-		// tcp checksum
-		uint32_t tmp_sum = 0;
-		fwd->tcp.checksum = 0;
-		tmp_sum += (ntohs(fwd->ip.src >> 16)) + (ntohs(fwd->ip.src & 0xFFFF));
-		tmp_sum += (ntohs(fwd->ip.dst >> 16)) + (ntohs(fwd->ip.dst & 0xFFFF));
-		tmp_sum += (fwd->ip.proto);
-		tmp_sum += tcp_size;
-		for(int i=0; i<tcp_size; i+=2) {
-			tmp_sum += (*((uint8_t*)fwd + ETH_SIZE + ip_size + i) << 8) + (*((uint8_t*)fwd + ETH_SIZE + ip_size + i + 1));
-		}
-		tmp_sum += tmp_sum >> 16;
-		fwd->tcp.checksum = ntohs(~(uint16_t)tmp_sum);
-
-		tmp_sum = 0;
-		bwd->tcp.checksum = 0;
-		tmp_sum += (ntohs(bwd->ip.src >> 16)) + (ntohs(bwd->ip.src & 0xFFFF));
-		tmp_sum += (ntohs(bwd->ip.dst >> 16)) + (ntohs(bwd->ip.dst & 0xFFFF));
-		tmp_sum += (bwd->ip.proto);
-		tmp_sum += tcp_size;
-		for(int i=0; i<tcp_size; i+=2) {
-			tmp_sum += (*((uint8_t*)bwd + ETH_SIZE + ip_size + i) << 8) + (*((uint8_t*)bwd + ETH_SIZE + ip_size + i + 1));
-		}
-		tmp_sum += tmp_sum >> 16;
-		bwd->tcp.checksum = ntohs(~(uint16_t)tmp_sum);
-
-		//PRINT_TCP(fwd);
-		//PRINT_TCP(bwd);
-#ifdef DEBUG
-		printf("[VAR] size of tcpPacket struct : %lu\n", sizeof(_tcpPacket));
-#endif
-
 		res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(fwd), sizeof(_tcpPacket));
 		GTRACE("send forward packet");
 		if(res != 0) {
