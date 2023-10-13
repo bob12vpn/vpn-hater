@@ -28,14 +28,6 @@ void usage() {
 	printf("example: sudo ./drop-packet enp0s3\n");
 }
 
-uint16_t ntohs(uint16_t n) {
-	return (n>>8) | (n<<8);
-}
-
-uint32_t ntohl(uint32_t n) {
-	return (n<<24) | (n<<8 & 0xFF0000) | (n>>8 & 0xFF00) | (n>>24 & 0xFF);
-}
-
 uint8_t hex2int(char n) {
 	if('0' <= n && n <= '9') return n - '0';
 	else return n - 'a' + 10;
@@ -84,9 +76,9 @@ int main(int argc, char* argv[]) {
 
 		tcpPacket->eth = *((struct _eth*)(packet));
 		tcpPacket->ip  = *((struct _ip* )(packet + ETH_SIZE));
-		tcpPacket->tcp = *((struct _tcp*)(packet + ETH_SIZE + IP_SIZE));
+		tcpPacket->tcp = *((struct _tcp*)(packet + ETH_SIZE + tcpPacket->ip.ip_size()));
 
-		if(ntohs(tcpPacket->eth.type) != ETH_TYPE_IPV4) continue;
+		if(ntohs(tcpPacket->eth.type) != tcpPacket->eth.IPv4) continue;
 		if(tcpPacket->ip.proto != IP_PROTO_TCP) continue;
 		if(tcpPacket->tcp.flags2 != TCP_FLAGS_ACK) continue;
 
@@ -113,28 +105,18 @@ int main(int argc, char* argv[]) {
 		uint16_t tcp_data_size = ntohs(tcpPacket->ip.len) - ip_size - tcp_size;
 		fwd->tcp.seq_raw = ntohl(tcpPacket->tcp.seq_raw + tcp_data_size);
 		bwd->tcp.seq_raw = tcpPacket->tcp.seq_raw;
-		fwd->tcp.flags2 |= TCP_FLAGS_RSTACK;
-		bwd->tcp.flags2 |= TCP_FLAGS_RSTACK;
+		fwd->tcp.flags2 = TCP_FLAGS_RSTACK;
+		bwd->tcp.flags2 = TCP_FLAGS_RSTACK;
 
-		// ip checksum
-		uint32_t tmp_sum = 0;
-		fwd->ip.checksum = 0;
-		for(int i=0; i<20; i+=2) {
-			tmp_sum += (*((uint8_t*)fwd + ETH_SIZE + i) << 8) + (*((uint8_t*)fwd + ETH_SIZE + i + 1));
-		}
-		tmp_sum += tmp_sum >> 16;
-		fwd->ip.checksum = ntohs(~(uint16_t)tmp_sum);
-		
-		tmp_sum = 0;
-		bwd->ip.checksum = 0;
-		for(int i=0; i<20; i+=2) {
-			tmp_sum += (*((uint8_t*)bwd + ETH_SIZE + i) << 8) + (*((uint8_t*)bwd + ETH_SIZE + i + 1));
-		}
-		tmp_sum += tmp_sum >> 16;
-		bwd->ip.checksum = ntohs(~(uint16_t)tmp_sum);
+
+		fwd->ip.checksum = fwd->ip.calcIpChecksum(&(fwd->ip));
+		bwd->ip.checksum = bwd->ip.calcIpChecksum(&(bwd->ip));
+
+		fwd->tcp.checksum = fwd->tcp.calcTcpChecksum(&(fwd->ip), &(fwd->tcp));
+		bwd->tcp.checksum = bwd->tcp.calcTcpChecksum(&(bwd->ip), &(bwd->tcp));
 
 		// tcp checksum
-		tmp_sum = 0;
+		uint32_t tmp_sum = 0;
 		fwd->tcp.checksum = 0;
 		tmp_sum += (ntohs(fwd->ip.src >> 16)) + (ntohs(fwd->ip.src & 0xFFFF));
 		tmp_sum += (ntohs(fwd->ip.dst >> 16)) + (ntohs(fwd->ip.dst & 0xFFFF));

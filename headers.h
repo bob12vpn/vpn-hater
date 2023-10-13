@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <string>
+#include <netinet/in.h>
 
 
 #define	ETH_SIZE	14
@@ -12,12 +13,24 @@ struct _eth {
 	uint8_t  dst[6];
 	uint8_t  src[6];
 	uint16_t type;
+	
+	std::string srcStr() {
+		char tmp[17];
+		sprintf(tmp, "%x:%x:%x:%x:%x:%x", src[0], src[1], src[2], src[3], src[4], src[5]);
+		return std::string(tmp, tmp+17);
+	}
+	std::string dstStr() {
+		char tmp[17];
+		sprintf(tmp, "%x:%x:%x:%x:%x:%x", dst[0], dst[1], dst[2], dst[3], dst[4], dst[5]);
+		return std::string(tmp, tmp+17);
+	}
+	enum : uint16_t {
+		IPv4 = 0x0800
+	};
 };
 #pragma pack(pop)
-#define	ETH_TYPE_IPV4	0x0800
 
 
-#define	IP_SIZE	20
 struct _ip {
 	uint8_t hdr_len:4,
 		version:4;
@@ -37,6 +50,19 @@ struct _ip {
 		uint8_t dstmask[4];
 		uint32_t dst;
 	};
+
+	uint16_t ip_size() {
+		return (uint16_t)hdr_len * 4;
+	}
+	uint16_t calcIpChecksum(_ip *ip) {
+		uint32_t ret = 0;
+		ip->checksum = 0;
+		for(int i=0; i<ip->ip_size(); i++) {
+			ret += (*((uint8_t*)ip + i) << 8) + (*((uint8_t*)ip + i + 1));
+		}
+		ret += ret >> 16;
+		return ntohs(~(uint16_t)ret);
+	}
 };
 #define	IP_PROTO_TCP	6
 #define	IP_PROTO_UDP	17
@@ -64,6 +90,24 @@ struct _tcp {
 	uint16_t window_size_value;
 	uint16_t checksum;
 	uint16_t urgent_pointer;
+
+	uint16_t tcp_size() {
+		return (uint16_t)hdr_len * 4;
+	}
+	uint16_t calcTcpChecksum(_ip *ip, _tcp *tcp) {
+		uint32_t ret = 0;
+		tcp->checksum = 0;
+		
+		ret += (ntohs(ip->src >> 16)) + (ntohs(ip->src & 0xFFFF));
+		ret += (ntohs(ip->dst >> 16)) + (ntohs(ip->dst & 0xFFFF));
+		ret += ip->proto;
+		ret += tcp->tcp_size();
+		for(int i=0; i<tcp->tcp_size(); i+=2) {
+			ret += (*((uint8_t*)tcp + i) << 8) + (*((uint8_t*)tcp + i + 1));
+		}
+		ret += ret >> 16;
+		return ntohs(~(uint16_t)ret);
+	}
 };
 #define	TCP_DSTPORT_DNS	53
 #define TCP_DSTPORT_TLS 443
