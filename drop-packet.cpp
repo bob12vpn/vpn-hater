@@ -24,8 +24,8 @@ struct _tcpPacket final {
 #pragma pack(pop)
 
 void usage() {
-	printf("usage: sudo ./drop-packet <interface>\n");
-	printf("example: sudo ./drop-packet enp0s3\n");
+	printf("usage: sudo ./block-packet <mirror interface> <send interface>\n");
+	printf("example: sudo ./block-packet enp0s3 eth0\n");
 }
 
 uint8_t hex2int(char n) {
@@ -43,20 +43,26 @@ uint8_t* str2arrayMac(std::string mac_str) {
 
 int main(int argc, char* argv[]) {
 	GTRACE("Debug mode is enabled");
-	if(argc != 2) {
+	if(argc != 3) {
 		usage();
 		return -1;
 	}
-	char* handle = argv[1];
+	char* mirror_handle = argv[1];
+	char* send_handle = argv[2];
 
 	char errbuf[PCAP_ERRBUF_SIZE];
-	pcap_t* pcap = pcap_open_live(handle, BUFSIZ, 1, 1, errbuf);
-	if(pcap == NULL) {
-		fprintf(stderr, "pcap_open_live(%s) return null - %s\n", handle, errbuf);
+	pcap_t* mirror_pcap = pcap_open_live(mirror_handle, BUFSIZ, 1, 1, errbuf);
+	if(mirror_pcap == NULL) {
+		fprintf(stderr, "pcap_open_live(%s) return null - %s\n", mirror_handle, errbuf);
+		return -1;
+	}
+	pcap_t* send_pcap = pcap_open_live(send_handle, BUFSIZ, 1, 1, errbuf);
+	if(send_pcap == NULL) {
+		fprintf(stderr, "pcap_open_live(%s) return null - %s\n", send_handle, errbuf);
 		return -1;
 	}
 
-	std::ifstream iface("/sys/class/net/" + std::string(handle) + "/address");
+	std::ifstream iface("/sys/class/net/" + std::string(send_handle) + "/address");
 	std::string mac_temp((std::istreambuf_iterator<char>(iface)), std::istreambuf_iterator<char>());
 	std::string mac_str(mac_temp.begin(), mac_temp.end()-1);
 #ifdef DEBUG
@@ -71,7 +77,7 @@ int main(int argc, char* argv[]) {
 	while(++cnt) {
 		struct pcap_pkthdr* header;
 		const uint8_t* packet;
-		int res = pcap_next_ex(pcap, &header, &packet);
+		int res = pcap_next_ex(mirror_pcap, &header, &packet);
 		if(res == 0) continue;
 
 		tcpPacket->eth = *((struct _eth*)(packet));
@@ -115,22 +121,23 @@ int main(int argc, char* argv[]) {
 		fwd->tcp.checksum = _tcp::calcTcpChecksum(&(fwd->ip), &(fwd->tcp));
 		bwd->tcp.checksum = _tcp::calcTcpChecksum(&(bwd->ip), &(bwd->tcp));
 
-		res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(fwd), sizeof(_tcpPacket));
+		res = pcap_sendpacket(send_pcap, reinterpret_cast<const u_char*>(fwd), sizeof(_tcpPacket));
 		GTRACE("send forward packet");
 		if(res != 0) {
-			fprintf(stderr, "pcap_sendpacket(%s) of fwd return null - %s\n", handle, errbuf);
+			fprintf(stderr, "pcap_sendpacket(%s) of fwd return null - %s\n", send_handle, errbuf);
 		}
-		res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(bwd), sizeof(_tcpPacket));
+		res = pcap_sendpacket(send_pcap, reinterpret_cast<const u_char*>(bwd), sizeof(_tcpPacket));
 		GTRACE("send backward packet");
 		if(res != 0) {
-			fprintf(stderr, "pcap_sendpacket(%s) of bwd return null - %s\n", handle, errbuf);
+			fprintf(stderr, "pcap_sendpacket(%s) of bwd return null - %s\n", send_handle, errbuf);
 		}
 
 		printf("========%d========\n", cnt);
 	}
 
 	delete tcpPacket;
-	pcap_close(pcap);
+	pcap_close(mirror_pcap);
+	pcap_close(send_pcap);
 	
 	return 0;
 }
