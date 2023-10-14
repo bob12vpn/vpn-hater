@@ -109,11 +109,11 @@ int main(int argc, char* argv[]) {
 		bwd->tcp.flags2 = TCP_FLAGS_RSTACK;
 
 
-		fwd->ip.checksum = fwd->ip.calcIpChecksum(&(fwd->ip));
-		bwd->ip.checksum = bwd->ip.calcIpChecksum(&(bwd->ip));
+		fwd->ip.checksum = _ip::calcIpChecksum(&(fwd->ip));
+		bwd->ip.checksum = _ip::calcIpChecksum(&(bwd->ip));
 
-		fwd->tcp.checksum = fwd->tcp.calcTcpChecksum(&(fwd->ip), &(fwd->tcp));
-		bwd->tcp.checksum = bwd->tcp.calcTcpChecksum(&(bwd->ip), &(bwd->tcp));
+		fwd->tcp.checksum = _tcp::calcTcpChecksum(&(fwd->ip), &(fwd->tcp));
+		bwd->tcp.checksum = _tcp::calcTcpChecksum(&(bwd->ip), &(bwd->tcp));
 
 		res = pcap_sendpacket(pcap, reinterpret_cast<const u_char*>(fwd), sizeof(_tcpPacket));
 		GTRACE("send forward packet");

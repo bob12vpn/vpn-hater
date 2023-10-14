@@ -54,10 +54,10 @@ struct _ip {
 	uint16_t ip_size() {
 		return (uint16_t)hdr_len * 4;
 	}
-	uint16_t calcIpChecksum(_ip *ip) {
+	static uint16_t calcIpChecksum(_ip *ip) {
 		uint32_t ret = 0;
 		ip->checksum = 0;
-		for(int i=0; i<ip->ip_size(); i++) {
+		for(int i=0; i<ip->ip_size(); i+=2) {
 			ret += (*((uint8_t*)ip + i) << 8) + (*((uint8_t*)ip + i + 1));
 		}
 		ret += ret >> 16;
@@ -94,7 +94,7 @@ struct _tcp {
 	uint16_t tcp_size() {
 		return (uint16_t)hdr_len * 4;
 	}
-	uint16_t calcTcpChecksum(_ip *ip, _tcp *tcp) {
+	static uint16_t calcTcpChecksum(_ip *ip, _tcp *tcp) {
 		uint32_t ret = 0;
 		tcp->checksum = 0;
 		
