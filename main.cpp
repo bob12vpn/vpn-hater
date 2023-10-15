@@ -83,10 +83,11 @@ int main(int argc, char* argv[]) {
 	_tcpPacket *tcpPacket = new _tcpPacket;
 	_tcpPacket *fwd = new _tcpPacket;
 	_tcpPacket *bwd = new _tcpPacket;
+	struct pcap_pkthdr* header;
+	const uint8_t* packet;
+	int res;
 	while(++pkt_cnt) {
-		struct pcap_pkthdr* header;
-		const uint8_t* packet;
-		int res = pcap_next_ex(mirror_pcap, &header, &packet);
+		res = pcap_next_ex(mirror_pcap, &header, &packet);
 		if(res == 0) continue;
 
 		tcpPacket->eth = *((struct _eth*)(packet));
