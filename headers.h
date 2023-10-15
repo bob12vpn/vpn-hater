@@ -65,15 +65,15 @@ struct _ip {
 	uint8_t ttl() { return _ttl; }
 	uint8_t proto() { return _proto; }
 	uint16_t checksum() { return ntohs(_checksum); }
-	uint32_t src() { return src; }	// big endian, for simple implementation
-	uint32_t dst() { return dst; }	// big endia, same reason
+	uint32_t src() { return _src; }	// big endian, for simple implementation
+	uint32_t dst() { return _dst; }	// big endia, same reason
 
 	uint16_t ip_size() {
-		return (uint16_t)hdr_len * 4;
+		return (uint16_t)_hdr_len * 4;
 	}
 	static uint16_t calcIpChecksum(_ip *ip) {
 		uint32_t ret = 0;
-		ip->checksum = 0;
+		ip->_checksum = 0;
 		for(int i=0; i<ip->ip_size(); i+=2) {
 			ret += (*((uint8_t*)ip + i) << 8) + (*((uint8_t*)ip + i + 1));
 		}
@@ -122,7 +122,7 @@ struct _tcp {
 	uint16_t dstport() { return ntohs(_dstport); }
 	uint32_t seq_raw() { return ntohl(_seq_raw); }
 	uint32_t ack_raw() { return ntohl(_ack_raw); }
-	uint8_t flags1() { return _flags; }	// maybe unsafe
+	uint8_t flags1() { return _flags1; }	// maybe unsafe
 	uint8_t hdr_len() { return _hdr_len; }	// maybe unsafe
 	uint8_t flags2() { return _flags2; }
 	uint16_t window_size_value() { return ntohs(_window_size_value); }
@@ -130,18 +130,18 @@ struct _tcp {
 	uint16_t urgent_pointer() { return ntohs(_urgent_pointer); }
 
 	uint16_t tcp_size() {
-		return (uint16_t)hdr_len * 4;
+		return (uint16_t)_hdr_len * 4;
 	}
 	static uint16_t len(_ip *ip, _tcp *tcp) {
 		return ip->len() - ip->ip_size() - tcp->tcp_size();
 	}
 	static uint16_t calcTcpChecksum(_ip *ip, _tcp *tcp) {
 		uint32_t ret = 0;
-		tcp->checksum = 0;
+		tcp->_checksum = 0;
 		
-		ret += (ntohs(ip->src >> 16)) + (ntohs(ip->src & 0xFFFF));
-		ret += (ntohs(ip->dst >> 16)) + (ntohs(ip->dst & 0xFFFF));
-		ret += ip->proto;
+		ret += (ntohs(ip->src() >> 16)) + (ntohs(ip->src() & 0xFFFF));
+		ret += (ntohs(ip->dst() >> 16)) + (ntohs(ip->dst() & 0xFFFF));
+		ret += ip->proto();
 		ret += tcp->tcp_size();
 		for(int i=0; i<tcp->tcp_size(); i+=2) {
 			ret += (*((uint8_t*)tcp + i) << 8) + (*((uint8_t*)tcp + i + 1));
