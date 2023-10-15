@@ -135,7 +135,7 @@ int main(int argc, char* argv[]) {
 			fprintf(stderr, "pcap_sendpacket(%s) of bwd return null - %s\n", send_interface, errbuf);
 		}
 
-		printf("========%d========\n", pkt_cnt);
+		GTRACE("========%d========", pkt_cnt);
 	}
 
 	delete tcpPacket;
