@@ -132,6 +132,9 @@ struct _tcp {
 	uint16_t tcp_size() {
 		return (uint16_t)hdr_len * 4;
 	}
+	static uint16_t len(_ip *ip, _tcp *tcp) {
+		return ip->len() - ip->ip_size() - tcp->tcp_size();
+	}
 	static uint16_t calcTcpChecksum(_ip *ip, _tcp *tcp) {
 		uint32_t ret = 0;
 		tcp->checksum = 0;
