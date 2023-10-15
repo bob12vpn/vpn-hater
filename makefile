@@ -1,8 +1,8 @@
 LDLIBS += -lpcap
 
-all: drop-packet
+all: block-packet
 
-drop-packet: headers.h log.h drop-packet.cpp gtrace.cpp gtrace.h
+block-packet: headers.h log.h block-packet.cpp gtrace.cpp gtrace.h
 
 clean:
-	rm -f drop-packet *.o
+	rm -f block-packet *.o

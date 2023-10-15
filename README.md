@@ -1,2 +1,2 @@
-# drop-packet
-the module that drop packet which we want
+# block-packet
+a module that block packets which we want
