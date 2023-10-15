@@ -10,46 +10,63 @@
 #define	ETH_SIZE	14
 #pragma pack(push, 1)
 struct _eth {
-	uint8_t  dst[6];
-	uint8_t  src[6];
-	uint16_t type;
-	
+	uint8_t  _dst[6];
+	uint8_t  _src[6];
+	uint16_t _type;
+
+	uint8_t* dst() { return _dst; }
+	uint8_t* src() { return _src; }
+	uint16_t type() { return ntohs(_type); }
+
 	std::string srcStr() {
 		char tmp[17];
-		sprintf(tmp, "%x:%x:%x:%x:%x:%x", src[0], src[1], src[2], src[3], src[4], src[5]);
+		sprintf(tmp, "%x:%x:%x:%x:%x:%x", _src[0], _src[1], _src[2], _src[3], _src[4], _src[5]);
 		return std::string(tmp, tmp+17);
 	}
 	std::string dstStr() {
 		char tmp[17];
-		sprintf(tmp, "%x:%x:%x:%x:%x:%x", dst[0], dst[1], dst[2], dst[3], dst[4], dst[5]);
+		sprintf(tmp, "%x:%x:%x:%x:%x:%x", _dst[0], _dst[1], _dst[2], _dst[3], _dst[4], _dst[5]);
 		return std::string(tmp, tmp+17);
 	}
 	enum : uint16_t {
-		IPv4 = 0x0800
+		ipv4 = 0x0800
 	};
 };
 #pragma pack(pop)
 
 
 struct _ip {
-	uint8_t hdr_len:4,
-		version:4;
-	uint8_t dsfield;
-	uint16_t len;
-	uint16_t id;
-	uint16_t flags:3,
-		 frag_offset:13;
-	uint8_t ttl;
-	uint8_t proto;
-	uint16_t checksum;
+	uint8_t _hdr_len:4,
+		_version:4;
+	uint8_t _dsfield;
+	uint16_t _len;
+	uint16_t _id;
+	uint16_t _flags:3,
+		 _frag_offset:13;
+	uint8_t _ttl;
+	uint8_t _proto;
+	uint16_t _checksum;
 	union {
-		uint8_t srcmask[4];
-		uint32_t src;
+		uint8_t _srcmask[4];
+		uint32_t _src;
 	};
 	union {
-		uint8_t dstmask[4];
-		uint32_t dst;
+		uint8_t _dstmask[4];
+		uint32_t _dst;
 	};
+
+	uint8_t hdr_len() { return _hdr_len; }
+	uint8_t version() { return _version; }
+	uint16_t dsfield() { return ntohs(_dsfield); }
+	uint16_t len() { return ntohs(_len); }
+	uint16_t id() { return ntohs(_id); }
+	uint16_t flags() { return ntohs(_flags); }	// maybe unsafe
+	uint16_t frag_offset() { return ntohs(_frag_offset); }	// maybe unsafe
+	uint8_t ttl() { return _ttl; }
+	uint8_t proto() { return _proto; }
+	uint16_t checksum() { return ntohs(_checksum); }
+	uint32_t src() { return src; }	// big endian, for simple implementation
+	uint32_t dst() { return dst; }	// big endia, same reason
 
 	uint16_t ip_size() {
 		return (uint16_t)hdr_len * 4;
@@ -63,33 +80,54 @@ struct _ip {
 		ret += ret >> 16;
 		return ntohs(~(uint16_t)ret);
 	}
+	enum : uint16_t {
+		tcp = 6,
+		udp = 17
+	};
 };
-#define	IP_PROTO_TCP	6
-#define	IP_PROTO_UDP	17
 
 
 #define	UDP_SIZE	8
 struct _udp {
-	uint16_t srcport;
-	uint16_t dstport;
-	uint16_t length;
-	uint16_t checksum;
+	uint16_t _srcport;
+	uint16_t _dstport;
+	uint16_t _length;
+	uint16_t _checksum;
+
+	uint16_t srcport() { return ntohs(_srcport); }
+	uint16_t dstport() { return ntohs(_dstport); }
+	uint16_t length() { return ntohs(_length); }
+	uint16_t checksum() { return ntohs(_checksum); }
+	
+	enum : uint16_t {
+		dns = 53,
+		tls = 443
+	};
 };
-#define	UDP_DSTPORT_DNS	53
-#define UDP_DSTPORT_TLS 443
 
 
 struct _tcp {
-	uint16_t srcport;
-	uint16_t dstport;
-	uint32_t seq_raw;
-	uint32_t ack_raw;
-	uint8_t flags1:4,
-		hdr_len:4;
-	uint8_t flags2;
-	uint16_t window_size_value;
-	uint16_t checksum;
-	uint16_t urgent_pointer;
+	uint16_t _srcport;
+	uint16_t _dstport;
+	uint32_t _seq_raw;
+	uint32_t _ack_raw;
+	uint8_t _flags1:4,
+		_hdr_len:4;
+	uint8_t _flags2;
+	uint16_t _window_size_value;
+	uint16_t _checksum;
+	uint16_t _urgent_pointer;
+
+	uint16_t srcport() { return ntohs(_srcport); }
+	uint16_t dstport() { return ntohs(_dstport); }
+	uint32_t seq_raw() { return ntohl(_seq_raw); }
+	uint32_t ack_raw() { return ntohl(_ack_raw); }
+	uint8_t flags1() { return _flags; }	// maybe unsafe
+	uint8_t hdr_len() { return _hdr_len; }	// maybe unsafe
+	uint8_t flags2() { return _flags2; }
+	uint16_t window_size_value() { return ntohs(_window_size_value); }
+	uint16_t checksum() { return ntohs(_checksum); }
+	uint16_t urgent_pointer() { return ntohs(_urgent_pointer); }
 
 	uint16_t tcp_size() {
 		return (uint16_t)hdr_len * 4;
@@ -108,11 +146,15 @@ struct _tcp {
 		ret += ret >> 16;
 		return ntohs(~(uint16_t)ret);
 	}
+	enum : uint16_t {
+		dns = 53,
+		tls = 443
+	};
+	enum : uint16_t {
+		flags_ack = 0x10,
+		flags_rstack = 0x14
+	};
 };
-#define	TCP_DSTPORT_DNS	53
-#define TCP_DSTPORT_TLS 443
-#define TCP_FLAGS_ACK 0x10
-#define TCP_FLAGS_RSTACK 0x14
 
 
 #define	DNS_SIZE	12
