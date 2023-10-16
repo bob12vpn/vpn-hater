@@ -3,7 +3,7 @@ all: block-packet
 gtrace.o: gtrace.cpp gtrace.h
 	g++ -c gtrace.cpp
 
-main.o: main.cpp headers.h gtrace.cpp gtrace.h
+main.o: main.cpp headers.h
 	g++ -c main.cpp
 
 block-packet: main.o gtrace.o
