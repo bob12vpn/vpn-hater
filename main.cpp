@@ -1,5 +1,6 @@
 #define DEBUG
 
+// user-defined
 #include "headers.h"
 #include "gtrace.h"
 
@@ -12,6 +13,10 @@
 // C
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+// network
 #include <pcap.h>
 
 char errbuf[PCAP_ERRBUF_SIZE];
@@ -72,6 +77,35 @@ int main(int argc, char* argv[]) {
 
 	pcap_t* mirror_pcap = open_pcap(mirror_interface);
 	pcap_t* send_pcap = open_pcap(send_interface);
+	
+	// begin of raw socket
+	int sd_ = ::socket(PF_INET, SOCK_RAW, IPPROTO_RAW);
+	if(sd_ == -1) {
+		GTRACE("socket return -1");
+		return -1;
+	}
+
+	int *one; *one = 1;
+	int res = ::setsockopt(sd_, IPPROTO_IP, IP_HDRINCL, one, sizeof(one));
+	if(res < 0) {
+		GTRACE("setsockopt return -1");
+		return -1;
+	}
+
+	if(send_interface != "") {
+		printf("%s\n%ld\n", send_interface, strlen(send_interface));
+		res = ::setsockopt(sd_, SOL_SOCKET, SO_BINDTODEVICE, send_interface, strlen(send_interface));
+		if(res < 0) {
+			GTRACE("setsockopt return fail");
+			return -1;
+		}
+	}
+
+	struct sockaddr_in addr_in_;
+	memset(&addr_in_, 0, sizeof(addr_in_));
+	addr_in_.sin_family = AF_INET;
+	// end of raw socket
+
 	if(mirror_pcap == NULL || send_pcap == NULL) {
 		return -1;
 	}
@@ -84,7 +118,6 @@ int main(int argc, char* argv[]) {
 	_tcpPacket *bwd = new _tcpPacket;
 	struct pcap_pkthdr* header;
 	const uint8_t* packet;
-	int res;
 	while(++pkt_cnt) {
 		res = pcap_next_ex(mirror_pcap, &header, &packet);
 		if(res == 0) continue;
@@ -123,6 +156,16 @@ int main(int argc, char* argv[]) {
 		fwd->tcp._checksum = _tcp::calcTcpChecksum(&(fwd->ip), &(fwd->tcp));
 		bwd->tcp._checksum = _tcp::calcTcpChecksum(&(bwd->ip), &(bwd->tcp));
 
+		
+		addr_in_.sin_addr.s_addr = fwd->ip._dst;
+		res = ::sendto(sd_, &(fwd->ip), fwd->ip.len(), 0, (struct sockaddr*)&addr_in_, sizeof(struct sockaddr_in));
+		GTRACE("send forward packet");
+
+		addr_in_.sin_addr.s_addr = bwd->ip._dst;
+		res = ::sendto(sd_, &(bwd->ip), bwd->ip.len(), 0, (struct sockaddr*)&addr_in_, sizeof(struct sockaddr_in));
+		GTRACE("send backward packet");
+
+		/*
 		res = pcap_sendpacket(send_pcap, reinterpret_cast<const u_char*>(fwd), sizeof(_tcpPacket));
 		GTRACE("send forward packet");
 		if(res != 0) {
@@ -133,6 +176,7 @@ int main(int argc, char* argv[]) {
 		if(res != 0) {
 			fprintf(stderr, "pcap_sendpacket(%s) of bwd return null - %s\n", send_interface, errbuf);
 		}
+		*/
 
 		GTRACE("========%d========", pkt_cnt);
 	}
@@ -140,6 +184,8 @@ int main(int argc, char* argv[]) {
 	delete tcpPacket;
 	pcap_close(mirror_pcap);
 	pcap_close(send_pcap);
+
+	::close(sd_);
 	
 	return 0;
 }
