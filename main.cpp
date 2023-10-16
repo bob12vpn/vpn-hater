@@ -1,7 +1,6 @@
 #define DEBUG
 
 #include "headers.h"
-#include "log.h"
 #include "gtrace.h"
 
 // C++

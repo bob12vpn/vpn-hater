@@ -1,5 +1,3 @@
-LDLIBS += -lpcap
-
 all: block-packet
 
 gtrace.o: gtrace.cpp gtrace.h
