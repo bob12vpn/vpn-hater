@@ -165,19 +165,6 @@ int main(int argc, char* argv[]) {
 		res = ::sendto(sd_, &(bwd->ip), bwd->ip.len(), 0, (struct sockaddr*)&addr_in_, sizeof(struct sockaddr_in));
 		GTRACE("send backward packet");
 
-		/*
-		res = pcap_sendpacket(send_pcap, reinterpret_cast<const u_char*>(fwd), sizeof(_tcpPacket));
-		GTRACE("send forward packet");
-		if(res != 0) {
-			fprintf(stderr, "pcap_sendpacket(%s) of fwd return null - %s\n", send_interface, errbuf);
-		}
-		res = pcap_sendpacket(send_pcap, reinterpret_cast<const u_char*>(bwd), sizeof(_tcpPacket));
-		GTRACE("send backward packet");
-		if(res != 0) {
-			fprintf(stderr, "pcap_sendpacket(%s) of bwd return null - %s\n", send_interface, errbuf);
-		}
-		*/
-
 		GTRACE("========%d========", pkt_cnt);
 	}
 
