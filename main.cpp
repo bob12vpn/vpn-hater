@@ -76,7 +76,10 @@ int main(int argc, char* argv[]) {
 	char* send_interface = argv[2];
 
 	pcap_t* mirror_pcap = open_pcap(mirror_interface);
-	pcap_t* send_pcap = open_pcap(send_interface);
+	if(mirror_pcap == NULL) {
+		return -1;
+	}
+	uint8_t *my_mac = resolve_mac(send_interface);
 	
 	// begin of raw socket
 	int sd_ = ::socket(PF_INET, SOCK_RAW, IPPROTO_RAW);
@@ -105,12 +108,6 @@ int main(int argc, char* argv[]) {
 	memset(&addr_in_, 0, sizeof(addr_in_));
 	addr_in_.sin_family = AF_INET;
 	// end of raw socket
-
-	if(mirror_pcap == NULL || send_pcap == NULL) {
-		return -1;
-	}
-
-	uint8_t *my_mac = resolve_mac(send_interface);
 
 	int pkt_cnt = 0;
 	_tcpPacket *tcpPacket = new _tcpPacket;
