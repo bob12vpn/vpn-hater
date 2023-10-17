@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
 		tcpPacket->ip  = *((struct _ip* )(packet + ETH_SIZE));
 		tcpPacket->tcp = *((struct _tcp*)(packet + ETH_SIZE + tcpPacket->ip.ip_size()));
 
-		// modify custom_filter() function
+		// you can modify custom_filter() function
 		// it must return true, when a packet is recieved what you don't need
 		if(custom_filter(tcpPacket)) continue;
 
