@@ -61,8 +61,7 @@ uint8_t* resolve_mac(char* interface) {
 bool custom_filter(_tcpPacket *pkt) {
 	if(pkt->eth.type() != _eth::ipv4) return true;
 	if(pkt->ip.proto() != _ip::tcp) return true;
-	if(pkt->tcp.flags2() != _tcp::flags_ack) return true;
-
+	// if(pkt->tcp.flags2() != _tcp::flags_psh | _tcp::flags_ack) return true;
 	return false;
 }
 
@@ -153,8 +152,7 @@ int main(int argc, char* argv[]) {
 		std::swap(bwd->tcp._srcport, bwd->tcp._dstport);
 		fwd->tcp._seq_raw = ntohl(tcpPacket->tcp.seq_raw() + _tcp::len(&(tcpPacket->ip), &(tcpPacket->tcp)));
 		bwd->tcp._seq_raw = tcpPacket->tcp._seq_raw;
-		fwd->tcp._flags2 = _tcp::flags_rstack;
-		bwd->tcp._flags2 = _tcp::flags_rstack;
+		fwd->tcp._flags2 = bwd->tcp._flags2 = _tcp::flags_ack | _tcp::flags_rst;
 
 		// calculate ip and tcp checksum
 		fwd->ip._checksum = _ip::calcIpChecksum(&(fwd->ip));
