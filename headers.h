@@ -155,7 +155,10 @@ struct _tcp {
 	};
 	enum : uint16_t {
 		flags_ack = 0x10,
-		flags_rstack = 0x14
+		flags_psh = 0x8,
+		flags_rst = 0x4,
+		flags_syn = 0x2,
+		flags_fin = 0x1
 	};
 };
 
