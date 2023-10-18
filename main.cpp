@@ -172,7 +172,7 @@ int main(int argc, char* argv[]) {
 		GTRACE("send backward packet");
 
 		// print counter
-		printf("========%d========", pkt_cnt);
+		GTRACE("========%d========", pkt_cnt);
 	}
 
 	delete tcpPacket, fwd, bwd;
