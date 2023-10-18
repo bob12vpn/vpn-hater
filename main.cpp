@@ -36,7 +36,7 @@ void usage() {
 }
 
 pcap_t* open_pcap(char* interface) {
-	pcap_t* pcap = pcap_open_live(interface, BUFSIZ, 1, 1, errbuf);
+	pcap_t* pcap = pcap_open_live(interface, BUFSIZ, 1, -1, errbuf);
 	if(pcap == NULL) {
 		fprintf(stderr, "pcap_open_live(%s) return null - %s\n", interface, errbuf);
 		return NULL;
@@ -127,7 +127,10 @@ int main(int argc, char* argv[]) {
 	const uint8_t* packet;
 	while(++pkt_cnt) {
 		res = pcap_next_ex(mirror_pcap, &header, &packet);
-		if(res == 0) continue;
+		if(res == 0) {
+			usleep(100);
+			continue;
+		}
 
 		// initialize
 		tcpPacket->eth = *((struct _eth*)(packet));
@@ -143,6 +146,7 @@ int main(int argc, char* argv[]) {
 		fwd->eth = bwd->eth = tcpPacket->eth;
 		fwd->ip  = bwd->ip  = tcpPacket->ip;
 		fwd->tcp = bwd->tcp = tcpPacket->tcp;
+		fwd->tcp._hdr_len = 5;
 
 		// modify mac address
 		for(int i=0; i<6; i++)
