@@ -26,6 +26,7 @@ struct _tcpPacket final {
 	struct _eth eth;
 	struct _ip  ip;
 	struct _tcp tcp;
+	struct _openvpn openvpn;
 };
 #pragma pack(pop)
 
@@ -62,6 +63,11 @@ bool custom_filter(_tcpPacket *pkt) {
 	if(pkt->eth.type() != _eth::ipv4) return true;
 	if(pkt->ip.proto() != _ip::tcp) return true;
 	// if(pkt->tcp.flags2() != _tcp::flags_psh | _tcp::flags_ack) return true;
+	
+	// vs Proton VPN with Open VPN (TCP)
+	if(pkt->tcp.len(&(pkt->ip), &(pkt->tcp)) != pkt->openvpn.plen() + 2) return true;
+	if(pkt->openvpn.type() != 0x48) return true;
+	
 	return false;
 }
 
@@ -127,6 +133,7 @@ int main(int argc, char* argv[]) {
 		tcpPacket->eth = *((struct _eth*)(packet));
 		tcpPacket->ip  = *((struct _ip* )(packet + ETH_SIZE));
 		tcpPacket->tcp = *((struct _tcp*)(packet + ETH_SIZE + tcpPacket->ip.ip_size()));
+		tcpPacket->openvpn = *((struct _openvpn*)(packet + ETH_SIZE + tcpPacket->ip.ip_size() + tcpPacket->tcp.tcp_size()));
 
 		// you can modify custom_filter() function
 		// it must return true, when a packet is recieved what you don't need
