@@ -22,11 +22,11 @@
 char errbuf[PCAP_ERRBUF_SIZE];
 
 #pragma pack(push, 1)
-struct _tcpPacket final {
-	struct _eth eth;
-	struct _ip  ip;
-	struct _tcp tcp;
-	struct _openvpn openvpn;
+struct TcpHdrPacket final {
+	struct EthHdr eth;
+	struct IpHdr  ip;
+	struct TcpHdr tcp;
+	struct OpenVpnTcpHdr openvpn;
 };
 #pragma pack(pop)
 
@@ -59,10 +59,10 @@ uint8_t* resolve_mac(char* interface) {
 	return ret;
 }
 
-bool custom_filter(_tcpPacket *pkt) {
-	if(pkt->eth.type() != _eth::ipv4) return true;
-	if(pkt->ip.proto() != _ip::tcp) return true;
-	// if(pkt->tcp.flags2() != _tcp::flags_psh | _tcp::flags_ack) return true;
+bool custom_filter(TcpHdrPacket *pkt) {
+	if(pkt->eth.type() != EthHdr::ipv4) return true;
+	if(pkt->ip.proto() != IpHdr::tcp) return true;
+	// if(pkt->tcp.flags2() != TcpHdr::flags_psh | TcpHdr::flags_ack) return true;
 	
 	// vs Proton VPN with Open VPN (TCP)
 	if(pkt->tcp.len(&(pkt->ip), &(pkt->tcp)) != pkt->openvpn.plen() + 2) return true;
@@ -120,23 +120,24 @@ int main(int argc, char* argv[]) {
 	// end of raw socket
 
 	int pkt_cnt = 0;
-	_tcpPacket *tcpPacket = new _tcpPacket;
-	_tcpPacket *fwd = new _tcpPacket;
-	_tcpPacket *bwd = new _tcpPacket;
+	TcpHdrPacket *tcpPacket = new TcpHdrPacket;
+	TcpHdrPacket *fwd = new TcpHdrPacket;
+	TcpHdrPacket *bwd = new TcpHdrPacket;
 	struct pcap_pkthdr* header;
 	const uint8_t* packet;
-	while(++pkt_cnt) {
+	while(true) {
 		res = pcap_next_ex(mirror_pcap, &header, &packet);
 		if(res == 0) {
-			usleep(100);
+			usleep(10);
 			continue;
 		}
+		pkt_cnt++;
 
 		// initialize
-		tcpPacket->eth = *((struct _eth*)(packet));
-		tcpPacket->ip  = *((struct _ip* )(packet + ETH_SIZE));
-		tcpPacket->tcp = *((struct _tcp*)(packet + ETH_SIZE + tcpPacket->ip.ip_size()));
-		tcpPacket->openvpn = *((struct _openvpn*)(packet + ETH_SIZE + tcpPacket->ip.ip_size() + tcpPacket->tcp.tcp_size()));
+		tcpPacket->eth = *((struct EthHdr*)(packet));
+		tcpPacket->ip  = *((struct IpHdr* )(packet + ETH_SIZE));
+		tcpPacket->tcp = *((struct TcpHdr*)(packet + ETH_SIZE + tcpPacket->ip.ip_size()));
+		tcpPacket->openvpn = *((struct OpenVpnTcpHdr*)(packet + ETH_SIZE + tcpPacket->ip.ip_size() + tcpPacket->tcp.tcp_size()));
 
 		// you can modify custom_filter() function
 		// it must return true, when a packet is recieved what you don't need
@@ -161,16 +162,16 @@ int main(int argc, char* argv[]) {
 
 		// modify tcp header
 		std::swap(bwd->tcp._srcport, bwd->tcp._dstport);
-		fwd->tcp._seq_raw = ntohl(tcpPacket->tcp.seq_raw() + _tcp::len(&(tcpPacket->ip), &(tcpPacket->tcp)));
+		fwd->tcp._seq_raw = ntohl(tcpPacket->tcp.seq_raw() + TcpHdr::len(&(tcpPacket->ip), &(tcpPacket->tcp)));
 		bwd->tcp._seq_raw = tcpPacket->tcp._seq_raw;
-		fwd->tcp._flags2 = bwd->tcp._flags2 = _tcp::flags_ack | _tcp::flags_rst;
+		fwd->tcp._flags2 = bwd->tcp._flags2 = TcpHdr::flags_ack | TcpHdr::flags_rst;
 
 		// calculate ip and tcp checksum
-		fwd->ip._checksum = _ip::calcIpChecksum(&(fwd->ip));
-		bwd->ip._checksum = _ip::calcIpChecksum(&(bwd->ip));
+		fwd->ip._checksum = IpHdr::calcIpChecksum(&(fwd->ip));
+		bwd->ip._checksum = IpHdr::calcIpChecksum(&(bwd->ip));
 
-		fwd->tcp._checksum = _tcp::calcTcpChecksum(&(fwd->ip), &(fwd->tcp));
-		bwd->tcp._checksum = _tcp::calcTcpChecksum(&(bwd->ip), &(bwd->tcp));
+		fwd->tcp._checksum = TcpHdr::calcTcpChecksum(&(fwd->ip), &(fwd->tcp));
+		bwd->tcp._checksum = TcpHdr::calcTcpChecksum(&(bwd->ip), &(bwd->tcp));
 
 
 		// send packet
