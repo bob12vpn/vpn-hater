@@ -9,7 +9,7 @@
 
 #define	ETH_SIZE	14
 #pragma pack(push, 1)
-struct _eth {
+struct EthHdr {
 	uint8_t  _dst[6];
 	uint8_t  _src[6];
 	uint16_t _type;
@@ -35,7 +35,7 @@ struct _eth {
 #pragma pack(pop)
 
 
-struct _ip {
+struct IpHdr {
 	uint8_t _hdr_len:4,
 		_version:4;
 	uint8_t _dsfield;
@@ -71,7 +71,7 @@ struct _ip {
 	uint16_t ip_size() {
 		return (uint16_t)_hdr_len * 4;
 	}
-	static uint16_t calcIpChecksum(_ip *ip) {
+	static uint16_t calcIpChecksum(IpHdr *ip) {
 		uint32_t ret = 0;
 		ip->_checksum = 0;
 		for(int i=0; i<ip->ip_size(); i+=2) {
@@ -88,7 +88,7 @@ struct _ip {
 
 
 #define	UDP_SIZE	8
-struct _udp {
+struct UdpHdr {
 	uint16_t _srcport;
 	uint16_t _dstport;
 	uint16_t _length;
@@ -106,7 +106,7 @@ struct _udp {
 };
 
 
-struct _tcp {
+struct TcpHdr {
 	uint16_t _srcport;
 	uint16_t _dstport;
 	uint32_t _seq_raw;
@@ -132,10 +132,10 @@ struct _tcp {
 	uint16_t tcp_size() {
 		return (uint16_t)_hdr_len * 4;
 	}
-	static uint16_t len(_ip *ip, _tcp *tcp) {
+	static uint16_t len(IpHdr *ip, TcpHdr *tcp) {
 		return ip->len() - ip->ip_size() - tcp->tcp_size();
 	}
-	static uint16_t calcTcpChecksum(_ip *ip, _tcp *tcp) {
+	static uint16_t calcTcpChecksum(IpHdr *ip, TcpHdr *tcp) {
 		uint32_t ret = 0;
 		tcp->_checksum = 0;
 		
@@ -164,7 +164,7 @@ struct _tcp {
 
 
 #pragma pack(push, 1)
-struct _openvpn {
+struct OpenVpnTcpHdr {
 	uint16_t _plen;
 	uint32_t _type:8,
 		 _peerid:24;
@@ -174,57 +174,6 @@ struct _openvpn {
 	uint32_t peerid() { return ntohl(_peerid); }
 };
 #pragma pack(pop)
-
-
-#define	DNS_SIZE	12
-struct _dns {
-	uint16_t id;
-	uint16_t flags;
-	struct count {
-		uint16_t queries;
-		uint16_t answers;
-		uint16_t auth_rr;
-		uint16_t add_rr;
-	};
-};
-
-
-#define TLS_RECORD_SIZE 5
-#define TLS_HANDSHAKE_RANDOM_SIZE 32
-struct _extension {
-	uint16_t type;
-	uint16_t len;
-	uint16_t server_name_list_len;
-	uint8_t server_name_type;
-	uint16_t server_name_len;
-	std::string server_name;
-};
-struct _record {
-	uint8_t content_type;
-	uint16_t version;
-	uint16_t length;
-};
-struct _handshake {
-	uint8_t type;
-	uint32_t length;
-	uint16_t version;
-	std::string random;
-	uint8_t session_id_length;
-	std::string session_id;
-	uint16_t cipher_suites_length;
-	std::string ciphersuites;
-	uint8_t comp_methods_length;
-	std::string comp_methods;
-	uint16_t extensions_length;
-	struct _extension extension;
-};
-struct _tls_client_hello {
-	struct _record record;
-	struct _handshake handshake;
-};
-#define TLS_RECORD_CONTENT_TYPE_HANDSHAKE 22
-#define TLS_HANDSHAKE_TYPE_CLIENT_HELLO 1
-#define TLS_HANDSHAKE_EXTENSION_TYPE_SERVER_NAME 0
 
 
 #endif // HDR_H_
