@@ -1,7 +1,7 @@
 #define DEBUG
 
 // user-defined
-#include "headers.h"
+#include "packet.h"
 #include "gtrace.h"
 
 // C++
@@ -20,23 +20,6 @@
 #include <pcap.h>
 
 char errbuf[PCAP_ERRBUF_SIZE];
-
-#pragma pack(push, 1)
-struct TxPacket final {
-	struct EthHdr eth;
-	struct IpHdr  ip;
-	struct TcpHdr tcp;
-};
-#pragma pack(pop)
-
-
-#pragma pack(push, 1)
-struct RxPacket final {
-	struct EthHdr *eth;
-	struct IpHdr  *ip;
-	struct TcpHdr *tcp;
-	struct OpenVpnTcpHdr *openvpn;
-}
 
 void usage() {
 	printf("usage: sudo ./block-packet <mirror interface> <send interface>\n");
@@ -67,7 +50,7 @@ uint8_t* resolve_mac(char* interface) {
 	return ret;
 }
 
-bool custom_filter(TcpHdrPacket *pkt) {
+bool custom_filter(RxOpenVpnTcpPacket *pkt) {
 	if(pkt->eth.type() != EthHdr::ipv4) return true;
 	if(pkt->ip.proto() != IpHdr::tcp) return true;
 	// if(pkt->tcp.flags2() != TcpHdr::flags_psh | TcpHdr::flags_ack) return true;
@@ -128,9 +111,9 @@ int main(int argc, char* argv[]) {
 	// end of raw socket
 
 	int pkt_cnt = 0;
-	TcpHdrPacket *tcpPacket = new TcpHdrPacket;
-	TcpHdrPacket *fwd = new TcpHdrPacket;
-	TcpHdrPacket *bwd = new TcpHdrPacket;
+	RxOpenVpnTcpPacket *rxPacket = new RxOpenVpnTcpPacket;
+	TxTcpPacket *fwd = new TxTcpPacket;
+	TxTcpPacket *bwd = new TxTcpPacket;
 	struct pcap_pkthdr* header;
 	const uint8_t* packet;
 	while(true) {
@@ -142,37 +125,37 @@ int main(int argc, char* argv[]) {
 		pkt_cnt++;
 
 		// initialize
-		tcpPacket->eth = *((struct EthHdr*)(packet));
-		tcpPacket->ip  = *((struct IpHdr* )(packet + ETH_SIZE));
-		tcpPacket->tcp = *((struct TcpHdr*)(packet + ETH_SIZE + tcpPacket->ip.ip_size()));
-		tcpPacket->openvpn = *((struct OpenVpnTcpHdr*)(packet + ETH_SIZE + tcpPacket->ip.ip_size() + tcpPacket->tcp.tcp_size()));
+		rxPacket->eth = *((struct EthHdr*)(packet));
+		rxPacket->ip  = *((struct IpHdr* )(packet + ETH_SIZE));
+		rxPacket->tcp = *((struct TcpHdr*)(packet + ETH_SIZE + rxPacket->ip.ip_size()));
+		rxPacket->openvpntcp = *((struct OpenVpnTcpHdr*)(packet + ETH_SIZE + rxPacket->ip.ip_size() + rxPacket->tcp.tcp_size()));
 
 		// you can modify custom_filter() function
 		// it must return true, when a packet is recieved what you don't need
-		if(custom_filter(tcpPacket)) continue;
+		if(custom_filter(rxPacket)) continue;
 
 		// copy packet
-		fwd->eth = bwd->eth = tcpPacket->eth;
-		fwd->ip  = bwd->ip  = tcpPacket->ip;
-		fwd->tcp = bwd->tcp = tcpPacket->tcp;
+		fwd->eth = bwd->eth = rxPacket->eth;
+		fwd->ip  = bwd->ip  = rxPacket->ip;
+		fwd->tcp = bwd->tcp = rxPacket->tcp;
 		fwd->tcp._hdr_len = 5;
 
 		// modify mac address
 		for(int i=0; i<6; i++)
 			fwd->eth._src[i] = bwd->eth._src[i] = my_mac[i];
 		for(int i=0; i<6; i++)
-			bwd->eth._dst[i] = tcpPacket->eth._src[i];
+			bwd->eth._dst[i] = rxPacket->eth._src[i];
 
 		// modify ip header
-		fwd->ip._len = bwd->ip._len = ntohs(tcpPacket->ip.ip_size() + tcpPacket->tcp.tcp_size());
+		fwd->ip._len = bwd->ip._len = ntohs(rxPacket->ip.ip_size() + rxPacket->tcp.tcp_size());
 		std::swap(bwd->ip._src, bwd->ip._dst);
 		bwd->ip._ttl = 128;
 
 		// modify tcp header
 		std::swap(bwd->tcp._srcport, bwd->tcp._dstport);
-		fwd->tcp._seq_raw = ntohl(tcpPacket->tcp.seq_raw() + TcpHdr::len(&(tcpPacket->ip), &(tcpPacket->tcp)));
-		bwd->tcp._seq_raw = tcpPacket->tcp._seq_raw;
-		fwd->tcp._flags2 = bwd->tcp._flags2 = TcpHdr::flags_ack | TcpHdr::flags_rst;
+		fwd->tcp._seq_raw = ntohl(rxPacket->tcp.seq_raw() + TcpHdr::len(&(rxPacket->ip), &(rxPacket->tcp)));
+		bwd->tcp._seq_raw = rxPacket->tcp._seq_raw;
+		fwd->tcp._flags2 = bwd->tcp._flags2 = TcpHdr::flags_rst; // | TcpHdr::flags_ack;
 
 		// calculate ip and tcp checksum
 		fwd->ip._checksum = IpHdr::calcIpChecksum(&(fwd->ip));
@@ -195,7 +178,7 @@ int main(int argc, char* argv[]) {
 		GTRACE("========%d========", pkt_cnt);
 	}
 
-	delete tcpPacket, fwd, bwd;
+	delete rxPacket, fwd, bwd;
 	pcap_close(mirror_pcap);
 	::close(send_socket);
 	
