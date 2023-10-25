@@ -22,13 +22,21 @@
 char errbuf[PCAP_ERRBUF_SIZE];
 
 #pragma pack(push, 1)
-struct TcpHdrPacket final {
+struct TxPacket final {
 	struct EthHdr eth;
 	struct IpHdr  ip;
 	struct TcpHdr tcp;
-	struct OpenVpnTcpHdr openvpn;
 };
 #pragma pack(pop)
+
+
+#pragma pack(push, 1)
+struct RxPacket final {
+	struct EthHdr *eth;
+	struct IpHdr  *ip;
+	struct TcpHdr *tcp;
+	struct OpenVpnTcpHdr *openvpn;
+}
 
 void usage() {
 	printf("usage: sudo ./block-packet <mirror interface> <send interface>\n");
