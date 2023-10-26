@@ -1,6 +1,10 @@
 #ifndef PDU_H_
 #define PDU_H_
 
+// user-defined
+#include "packet.h"
+#include "utility.h"
+#include "gtrace.h"
 
 // C++
 #include <fstream>

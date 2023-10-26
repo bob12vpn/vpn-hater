@@ -1,3 +1,6 @@
+#ifndef TCP_H_
+#define TCP_H_
+
 #include "hpdu.h"
 
 
@@ -37,3 +40,5 @@ struct TcpHdr {
 		flags_fin = 0x1
 	};
 };
+
+#endif // TCP_H_

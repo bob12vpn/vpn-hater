@@ -1,6 +1,10 @@
+#ifndef PACKET_H_
+#define PACKET_H_
+
 #include "headers/eth.h"
 #include "headers/ip.h"
 #include "headers/tcp.h"
+#include "headers/udp.h"
 #include "headers/openvpntcp.h"
 
 struct RxPacket {
@@ -23,3 +27,5 @@ struct TxPacket {
     struct TcpHdr tcp;
 };
 #pragma pack(pop)
+
+#endif // PACKET_H_

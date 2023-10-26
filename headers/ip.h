@@ -1,3 +1,6 @@
+#ifndef IP_H_
+#define IP_H_
+
 #include "hpdu.h"
 
 
@@ -37,3 +40,5 @@ struct IpHdr {
 		udp = 17
 	};
 };
+
+#endif // IP_H_

@@ -1,3 +1,6 @@
+#ifndef ETH_H_
+#define ETH_H_
+
 #include "hpdu.h"
 
 
@@ -19,3 +22,5 @@ struct EthHdr {
 	};
 };
 #pragma pack(pop)
+
+#endif // ETH_H_

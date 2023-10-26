@@ -1,12 +1,7 @@
 #define DEBUG
 
 // user-defined
-#include "packet.h"
-#include "utility.h"
-#include "gtrace.h"
 #include "pdu.h"
-
-char errbuf[PCAP_ERRBUF_SIZE];
 
 void usage() {
 	printf("usage: sudo ./block-packet <mirror interface> <send interface>\n");
@@ -52,10 +47,10 @@ int main(int argc, char* argv[]) {
 		pkt_cnt++;
 
 		// initialize
-		rxPacket->eth = *((struct EthHdr*)(packet));
-		rxPacket->ip  = *((struct IpHdr* )(packet + ETH_SIZE));
-		rxPacket->tcp = *((struct TcpHdr*)(packet + ETH_SIZE + rxPacket->ip.ip_size()));
-		rxPacket->openvpntcp = *((struct OpenVpnTcpHdr*)(packet + ETH_SIZE + rxPacket->ip.ip_size() + rxPacket->tcp.tcp_size()));
+		rxPacket->eth = (struct EthHdr*)(packet);
+		rxPacket->ip  = (struct IpHdr* )(packet + ETH_SIZE);
+		rxPacket->tcp = (struct TcpHdr*)(packet + ETH_SIZE + rxPacket->ip->ip_size());
+		rxPacket->openvpntcp = (struct OpenVpnTcpHdr*)(packet + ETH_SIZE + rxPacket->ip->ip_size() + rxPacket->tcp->tcp_size());
 
 		// you can modify custom_filter() function
 		// it must return true, when a packet is recieved what you don't need
@@ -80,9 +75,9 @@ int main(int argc, char* argv[]) {
 
 		// modify tcp header
 		std::swap(bwd->tcp._srcport, bwd->tcp._dstport);
-		fwd->tcp._seq_raw = ntohl(rxPacket->tcp->seq_raw() + TcpHdr::len(&(rxPacket->ip), &(rxPacket->tcp)));
+		fwd->tcp._seq_raw = ntohl(rxPacket->tcp->seq_raw() + TcpHdr::payload_len(rxPacket->ip, rxPacket->tcp));
 		bwd->tcp._seq_raw = rxPacket->tcp->_seq_raw;
-		fwd->tcp._flags = bwd->tcp._flags = (1 << 15) | TcpHdr::flags_rst; // | TcpHdr::flags_ack;
+		fwd->tcp._flags = bwd->tcp._flags = TcpHdr::flags_rst; // | TcpHdr::flags_ack;
 
 		// calculate ip and tcp checksum
 		fwd->ip._checksum = IpHdr::calcIpChecksum(&(fwd->ip));

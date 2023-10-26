@@ -1,6 +1,7 @@
 #include "utility.h"
 
 pcap_t* open_pcap(char* interface) {
+	char errbuf[PCAP_ERRBUF_SIZE];	
 	pcap_t* pcap = pcap_open_live(interface, BUFSIZ, 1, -1, errbuf);
 	if(pcap == NULL) {
 		fprintf(stderr, "pcap_open_live(%s) return null - %s\n", interface, errbuf);
@@ -10,7 +11,7 @@ pcap_t* open_pcap(char* interface) {
 }
 
 int open_raw_socket(char* interface) {
-    int send_socket = ::socket(PF_INET, SOCK_RAW, IPPROTO_RAW);
+	int send_socket = ::socket(PF_INET, SOCK_RAW, IPPROTO_RAW);
 	if(send_socket == -1) {
 		GTRACE("socket return -1");
 		return -1;
@@ -31,6 +32,8 @@ int open_raw_socket(char* interface) {
 			return -1;
 		}
 	}
+
+	return send_socket;
 }
 
 void send_packet(int socket, struct sockaddr_in addr_in_, TxPacket *pkt) {
@@ -54,13 +57,13 @@ uint8_t* resolve_mac(char* interface) {
 }
 
 bool custom_filter(RxOpenVpnTcpPacket *pkt) {
-	if(pkt->eth.type() != EthHdr::ipv4) return true;
-	if(pkt->ip.proto() != IpHdr::tcp) return true;
+	if(pkt->eth->type() != EthHdr::ipv4) return true;
+	if(pkt->ip->proto() != IpHdr::tcp) return true;
 	// if(pkt->tcp.flags2() != TcpHdr::flags_psh | TcpHdr::flags_ack) return true;
 	
 	// vs Proton VPN with Open VPN (TCP)
-	if(pkt->tcp.len(&(pkt->ip), &(pkt->tcp)) != pkt->openvpn.plen() + 2) return true;
-	if(pkt->openvpn.type() != 0x48) return true;
+	if(pkt->tcp->payload_len(pkt->ip, pkt->tcp) != pkt->openvpntcp->plen() + 2) return true;
+	if(pkt->openvpntcp->type() != 0x48) return true;
 	
 	return false;
 }

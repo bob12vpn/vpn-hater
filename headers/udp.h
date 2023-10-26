@@ -1,3 +1,6 @@
+#ifndef UDP_H_
+#define UDP_H_
+
 #include "hpdu.h"
 
 
@@ -20,3 +23,5 @@ struct UdpHdr {
 		tls = 443
 	};
 };
+
+#endif // UDP_H_

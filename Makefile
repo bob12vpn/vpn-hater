@@ -1,22 +1,22 @@
 CC = g++
 CFLAGS = -Wall
 LDFLAGS = -lpcap
-OBJS = main.o gtrace.o 
+OBJS = main.o
 TARGET = block-packet
 
 $(TARGET): $(OBJS)
 	$(CC) -o $@ $(OBJS)
 
-main.o: packet.h utility.h gtrace.h pdu.h main.cpp
-packet.o: pdu.h packet.h packet.cpp
-utility.o: pdu.h utility.h utility.cpp
-gtrace.o: pdu.h gtrace.h gtrace.cpp
+main.o: 
+packet.o: 
+utility.o: 
+gtrace.o: 
 
-eth.o: hpdu.h eth.h eth.cpp
-ip.o: hpdu.h ip.h ip.cpp
-tcp.o: hpdu.h tcp.o tcp.cpp
-udp.o: hpdu.h udp.o udp.cpp
-openvpntcp.o: hpdu.h openvpntcp.o openvpntcp.cpp
+eth.o: 
+ip.o: 
+tcp.o: 
+udp.o: 
+openvpntcp.o: 
 
 clean:
 	rm -f *.o
