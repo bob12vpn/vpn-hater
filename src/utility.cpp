@@ -9,7 +9,7 @@ pcap_t* open_pcap(char* interface) {
 	return pcap;
 }
 
-auto open_raw_socket(char* interface) {
+int open_raw_socket(char* interface) {
     int send_socket = ::socket(PF_INET, SOCK_RAW, IPPROTO_RAW);
 	if(send_socket == -1) {
 		GTRACE("socket return -1");

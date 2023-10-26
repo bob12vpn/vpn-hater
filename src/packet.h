@@ -10,16 +10,16 @@ struct RxPacket {
     
     struct TcpHdr *tcp{nullptr};
     struct UdpHdr *udp{nullptr};
-}
+};
 
 struct RxOpenVpnTcpPacket : RxPacket {
     struct OpenVpnTcpHdr *openvpntcp{nullptr};
-}
+};
 
 #pragma pack(push, 1)
 struct TxPacket {
     struct EthHdr eth;
     struct IpHdr ip;
     struct TcpHdr tcp;
-}
+};
 #pragma pack(pop)

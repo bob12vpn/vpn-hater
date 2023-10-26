@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
 	memset(&addr_in_, 0, sizeof(addr_in_));
 	addr_in_.sin_family = AF_INET;
 
-	int pkt_cnt = 0;
+	int pkt_cnt = 0, res;
 	RxOpenVpnTcpPacket *rxPacket = new RxOpenVpnTcpPacket;
 	TxPacket *fwd = new TxPacket;
 	TxPacket *bwd = new TxPacket;
@@ -62,27 +62,27 @@ int main(int argc, char* argv[]) {
 		if(custom_filter(rxPacket)) continue;
 
 		// copy packet
-		fwd->eth = bwd->eth = rxPacket->eth;
-		fwd->ip  = bwd->ip  = rxPacket->ip;
-		fwd->tcp = bwd->tcp = rxPacket->tcp;
+		fwd->eth = bwd->eth = *(rxPacket->eth);
+		fwd->ip  = bwd->ip  = *(rxPacket->ip);
+		fwd->tcp = bwd->tcp = *(rxPacket->tcp);
 		fwd->tcp._hdr_len = 5;
 
 		// modify mac address
 		for(int i=0; i<6; i++)
 			fwd->eth._src[i] = bwd->eth._src[i] = my_mac[i];
 		for(int i=0; i<6; i++)
-			bwd->eth._dst[i] = rxPacket->eth._src[i];
+			bwd->eth._dst[i] = rxPacket->eth->_src[i];
 
 		// modify ip header
-		fwd->ip._len = bwd->ip._len = ntohs(rxPacket->ip.ip_size() + rxPacket->tcp.tcp_size());
+		fwd->ip._len = bwd->ip._len = ntohs(rxPacket->ip->ip_size() + rxPacket->tcp->tcp_size());
 		std::swap(bwd->ip._src, bwd->ip._dst);
 		bwd->ip._ttl = 128;
 
 		// modify tcp header
 		std::swap(bwd->tcp._srcport, bwd->tcp._dstport);
-		fwd->tcp._seq_raw = ntohl(rxPacket->tcp.seq_raw() + TcpHdr::len(&(rxPacket->ip), &(rxPacket->tcp)));
-		bwd->tcp._seq_raw = rxPacket->tcp._seq_raw;
-		fwd->tcp._flags2 = bwd->tcp._flags2 = TcpHdr::flags_rst; // | TcpHdr::flags_ack;
+		fwd->tcp._seq_raw = ntohl(rxPacket->tcp->seq_raw() + TcpHdr::len(&(rxPacket->ip), &(rxPacket->tcp)));
+		bwd->tcp._seq_raw = rxPacket->tcp->_seq_raw;
+		fwd->tcp._flags = bwd->tcp._flags = (1 << 15) | TcpHdr::flags_rst; // | TcpHdr::flags_ack;
 
 		// calculate ip and tcp checksum
 		fwd->ip._checksum = IpHdr::calcIpChecksum(&(fwd->ip));
