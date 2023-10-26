@@ -2,22 +2,9 @@
 
 // user-defined
 #include "packet.h"
+#include "utility.h"
 #include "gtrace.h"
-
-// C++
-#include <fstream>
-#include <vector>
-#include <string>
-#include <utility>
-
-// C
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
-// network
-#include <pcap.h>
+#include "pdu.h"
 
 char errbuf[PCAP_ERRBUF_SIZE];
 
@@ -26,44 +13,8 @@ void usage() {
 	printf("example: sudo ./block-packet enp0s3 eth0\n");
 }
 
-pcap_t* open_pcap(char* interface) {
-	pcap_t* pcap = pcap_open_live(interface, BUFSIZ, 1, -1, errbuf);
-	if(pcap == NULL) {
-		fprintf(stderr, "pcap_open_live(%s) return null - %s\n", interface, errbuf);
-		return NULL;
-	}
-	return pcap;
-}
-
-uint8_t hex2int(char n) {
-	return ('0' <= n && n <= '9') ? n - '0' : n - 'a' + 10;
-}
-
-uint8_t* resolve_mac(char* interface) {
-	std::ifstream iface("/sys/class/net/" + std::string(interface) + "/address");
-	std::string mac((std::istreambuf_iterator<char>(iface)), std::istreambuf_iterator<char>());
-	mac.pop_back();
-	uint8_t *ret = (uint8_t*)malloc(sizeof(uint8_t) * 8);
-	for(int i=0; i<6; i++) {
-		ret[i] = hex2int(mac[i*3])*16 + hex2int(mac[i*3+1]);
-	}
-	return ret;
-}
-
-bool custom_filter(RxOpenVpnTcpPacket *pkt) {
-	if(pkt->eth.type() != EthHdr::ipv4) return true;
-	if(pkt->ip.proto() != IpHdr::tcp) return true;
-	// if(pkt->tcp.flags2() != TcpHdr::flags_psh | TcpHdr::flags_ack) return true;
-	
-	// vs Proton VPN with Open VPN (TCP)
-	if(pkt->tcp.len(&(pkt->ip), &(pkt->tcp)) != pkt->openvpn.plen() + 2) return true;
-	if(pkt->openvpn.type() != 0x48) return true;
-	
-	return false;
-}
-
 int main(int argc, char* argv[]) {
-	GTRACE("Debug mode is enabled");
+	GTRACE("Logging level : Message");
 
 	if(argc != 3) {
 		usage();
@@ -73,53 +24,29 @@ int main(int argc, char* argv[]) {
 	char* send_interface = argv[2];
 
 	pcap_t* mirror_pcap = open_pcap(mirror_interface);
-	if(mirror_pcap == NULL) {
-		return -1;
-	}
-	GTRACE("mirror pcap is created");
+	if(mirror_pcap == NULL) return -1;
+	GTRACE("mirror pcap is opened");
 
 	uint8_t *my_mac = resolve_mac(send_interface);
 
-	// begin of raw socket
-	int send_socket = ::socket(PF_INET, SOCK_RAW, IPPROTO_RAW);
-	if(send_socket == -1) {
-		GTRACE("socket return -1");
-		return -1;
-	}
-
-	int one = 1;
-	int* pone = &one;
-	int res = ::setsockopt(send_socket, IPPROTO_IP, IP_HDRINCL, pone, sizeof(one));
-	if(res < 0) {
-		GTRACE("setsockopt(IP_HDRINCL) return FAIL");
-		return -1;
-	}
-
-	if(send_interface != "") {
-		res = ::setsockopt(send_socket, SOL_SOCKET, SO_BINDTODEVICE, send_interface, strlen(send_interface));
-		if(res < 0) {
-			GTRACE("setsockopt(SO_BINDTODEVICE) return FAIL");
-			return -1;
-		}
-	}
-
+	int send_socket = open_raw_socket(send_interface);
+	if(send_socket == -1) return -1;
+	GTRACE("send socket is opened");
+	
 	struct sockaddr_in addr_in_;
 	memset(&addr_in_, 0, sizeof(addr_in_));
 	addr_in_.sin_family = AF_INET;
 
-	GTRACE("send socket is created");
-	// end of raw socket
-
 	int pkt_cnt = 0;
 	RxOpenVpnTcpPacket *rxPacket = new RxOpenVpnTcpPacket;
-	TxTcpPacket *fwd = new TxTcpPacket;
-	TxTcpPacket *bwd = new TxTcpPacket;
+	TxPacket *fwd = new TxPacket;
+	TxPacket *bwd = new TxPacket;
 	struct pcap_pkthdr* header;
 	const uint8_t* packet;
 	while(true) {
 		res = pcap_next_ex(mirror_pcap, &header, &packet);
 		if(res == 0) {
-			usleep(10);
+			usleep(500);
 			continue;
 		}
 		pkt_cnt++;
@@ -164,14 +91,11 @@ int main(int argc, char* argv[]) {
 		fwd->tcp._checksum = TcpHdr::calcTcpChecksum(&(fwd->ip), &(fwd->tcp));
 		bwd->tcp._checksum = TcpHdr::calcTcpChecksum(&(bwd->ip), &(bwd->tcp));
 
-
+		
 		// send packet
-		addr_in_.sin_addr.s_addr = fwd->ip._dst;
-		res = ::sendto(send_socket, &(fwd->ip), fwd->ip.len(), 0, (struct sockaddr*)&addr_in_, sizeof(struct sockaddr_in));
+		send_packet(send_socket, addr_in_, fwd);
 		GTRACE("send forward packet");
-
-		addr_in_.sin_addr.s_addr = bwd->ip._dst;
-		res = ::sendto(send_socket, &(bwd->ip), bwd->ip.len(), 0, (struct sockaddr*)&addr_in_, sizeof(struct sockaddr_in));
+		send_packet(send_socket, addr_in_, bwd);
 		GTRACE("send backward packet");
 
 		// print counter

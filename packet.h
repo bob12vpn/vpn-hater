@@ -3,17 +3,21 @@
 #include "headers/tcp.h"
 #include "headers/openvpntcp.h"
 
-#pragma pack(push, 1)
-struct struct RxOpenVpnTcpPacket final {
-    struct EthHdr *eth;
-    struct IpHdr *ip;
-    struct TcpHdr *tcp;
-    struct OpenVpnTcpHdr *openvpntcp;
+struct RxPacket {
+    struct EthHdr *eth{nullptr};
+    
+    struct IpHdr *ip{nullptr};
+    
+    struct TcpHdr *tcp{nullptr};
+    struct UdpHdr *udp{nullptr};
 }
-#pragma pack(pop)
+
+struct RxOpenVpnTcpPacket : RxPacket {
+    struct OpenVpnTcpHdr *openvpntcp{nullptr};
+}
 
 #pragma pack(push, 1)
-struct struct TxTcpPacket final {
+struct TxPacket {
     struct EthHdr eth;
     struct IpHdr ip;
     struct TcpHdr tcp;

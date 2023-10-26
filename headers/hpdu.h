@@ -1,5 +1,5 @@
-#ifndef HDR_H_
-#define HDR_H_
+#ifndef HPDU_H_
+#define HPDU_H_
 
 
 #include <cstdint>
@@ -7,4 +7,4 @@
 #include <netinet/in.h>
 
 
-#endif // HDR_H_
+#endif // HPDU_H_
