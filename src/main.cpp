@@ -23,8 +23,6 @@ int main(int argc, char* argv[]) {
 	if(mirror_pcap == NULL) return -1;
 	GTRACE("mirror pcap is opened");
 
-	uint8_t *my_mac = resolve_mac(send_interface);
-
 	int send_socket = open_raw_socket(send_interface);
 	if(send_socket == -1) return -1;
 	GTRACE("send socket is opened");
