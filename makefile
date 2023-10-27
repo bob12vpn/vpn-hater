@@ -1,6 +1,8 @@
-TARGET=../block-packet
-SRCS=src/$(wildcard *.cpp) src/headers/$(wildcard *.cpp)
-OBJS=$(SRCS:%.cpp=%o)
+TARGET=block-packet
+SRCDIR=./src
+HDRDIR=./src/headers
+SRCS=$(wildcard $(HDRDIR)/*.cpp) $(wildcard $(SRCDIR)/*.cpp)
+OBJS=$(SRCS:%.cpp=%.o)
 
 CPPFLAGS=-Wall -Wextra
 LDLIBS=-lpcap
