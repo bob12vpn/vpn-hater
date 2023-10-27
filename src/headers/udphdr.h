@@ -1,7 +1,7 @@
-#ifndef UDP_H_
-#define UDP_H_
+#ifndef UDPHDR_H_
+#define UDPHDR_H_
 
-#include "hpdu.h"
+#include "hpch.h"
 
 
 #define	UDP_SIZE	8
@@ -24,4 +24,4 @@ struct UdpHdr {
 	};
 };
 
-#endif // UDP_H_
+#endif // UDPHDR_H_

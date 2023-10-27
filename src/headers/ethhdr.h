@@ -1,7 +1,7 @@
-#ifndef ETH_H_
-#define ETH_H_
+#ifndef ETHHDR_H_
+#define ETHHDR_H_
 
-#include "hpdu.h"
+#include "hpch.h"
 
 
 #define	ETH_SIZE	14
@@ -23,4 +23,4 @@ struct EthHdr {
 };
 #pragma pack(pop)
 
-#endif // ETH_H_
+#endif // ETHHDR_H_

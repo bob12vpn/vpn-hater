@@ -1,7 +1,7 @@
-#ifndef TCP_H_
-#define TCP_H_
+#ifndef TCPHDR_H_
+#define TCPHDR_H_
 
-#include "hpdu.h"
+#include "hpch.h"
 
 
 struct TcpHdr {
@@ -41,4 +41,4 @@ struct TcpHdr {
 	};
 };
 
-#endif // TCP_H_
+#endif // TCPHDR_H_

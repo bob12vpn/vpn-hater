@@ -1,10 +1,6 @@
-#ifndef PDU_H_
-#define PDU_H_
+#ifndef PCH_H_
+#define PCH_H_
 
-// user-defined
-#include "packet.h"
-#include "utility.h"
-#include "gtrace.h"
 
 // C++
 #include <fstream>
@@ -21,4 +17,4 @@
 // network
 #include <pcap.h>
 
-#endif // PDU_H_
+#endif // PCH_H_

@@ -1,5 +1,5 @@
-#ifndef HPDU_H_
-#define HPDU_H_
+#ifndef HPCH_H_
+#define HPCH_H_
 
 
 #include <cstdint>
@@ -7,4 +7,4 @@
 #include <netinet/in.h>
 
 
-#endif // HPDU_H_
+#endif // HPCH_H_

@@ -1,7 +1,7 @@
-#ifndef IP_H_
-#define IP_H_
+#ifndef IPHDR_H_
+#define IPHDR_H_
 
-#include "hpdu.h"
+#include "hpch.h"
 
 
 struct IpHdr {
@@ -41,4 +41,4 @@ struct IpHdr {
 	};
 };
 
-#endif // IP_H_
+#endif // IPHDR_H_

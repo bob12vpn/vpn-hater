@@ -22,7 +22,8 @@ struct RxOpenVpnTcpPacket : RxPacket {
 
 #pragma pack(push, 1)
 struct TxPacket {
-    struct EthHdr eth;
+    // raw socket does not need ETH
+    // struct EthHdr eth;
     struct IpHdr ip;
     struct TcpHdr tcp;
 };

@@ -1,11 +1,11 @@
-#include "pdu.h"
+#include "pch.h"
 
 #include "packet.h"
 #include "gtrace.h"
 
-pcap_t* open_pcap(char* interface);
+pcap_t* open_pcap(char* interface); // separate class
 
-int open_raw_socket(char* interface);
+int open_raw_socket(char* interface);   // separate class
 
 void send_packet(int socket, struct sockaddr_in addr_in_, TxPacket *pkt);
 

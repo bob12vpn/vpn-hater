@@ -1,7 +1,8 @@
-#define DEBUG
+#include "pch.h"
 
-// user-defined
-#include "pdu.h"
+#include "packet.h"
+#include "utility.h"
+#include "gtrace.h"
 
 void usage() {
 	printf("usage: sudo ./block-packet <mirror interface> <send interface>\n");
@@ -85,7 +86,6 @@ int main(int argc, char* argv[]) {
 
 		fwd->tcp._checksum = TcpHdr::calcTcpChecksum(&(fwd->ip), &(fwd->tcp));
 		bwd->tcp._checksum = TcpHdr::calcTcpChecksum(&(bwd->ip), &(bwd->tcp));
-
 		
 		// send packet
 		send_packet(send_socket, addr_in_, fwd);

@@ -1,7 +1,7 @@
-#ifndef OPENVPNTCP_H_
-#define OPENVPNTCP_H_
+#ifndef OPENVPNTCPHDR_H_
+#define OPENVPNTCPHDR_H_
 
-#include "hpdu.h"
+#include "hpch.h"
 
 
 #pragma pack(push, 1)
@@ -16,4 +16,4 @@ struct OpenVpnTcpHdr {
 };
 #pragma pack(pop)
 
-#endif // OPENVPNTCP_H_
+#endif // OPENVPNTCPHDR_H_
