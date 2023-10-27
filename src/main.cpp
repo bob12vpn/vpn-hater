@@ -58,16 +58,12 @@ int main(int argc, char* argv[]) {
 		if(custom_filter(rxPacket)) continue;
 
 		// copy packet
-		fwd->eth = bwd->eth = *(rxPacket->eth);
 		fwd->ip  = bwd->ip  = *(rxPacket->ip);
 		fwd->tcp = bwd->tcp = *(rxPacket->tcp);
 		fwd->tcp._hdr_len = 5;
 
 		// modify mac address
-		for(int i=0; i<6; i++)
-			fwd->eth._src[i] = bwd->eth._src[i] = my_mac[i];
-		for(int i=0; i<6; i++)
-			bwd->eth._dst[i] = rxPacket->eth->_src[i];
+		// deleted bacause of raw socket
 
 		// modify ip header
 		fwd->ip._len = bwd->ip._len = ntohs(rxPacket->ip->ip_size() + rxPacket->tcp->tcp_size());
