@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 		std::swap(bwd->tcp._srcport, bwd->tcp._dstport);
 		fwd->tcp._seq_raw = ntohl(rxPacket->tcp->seq_raw() + TcpHdr::payload_len(rxPacket->ip, rxPacket->tcp));
 		bwd->tcp._seq_raw = rxPacket->tcp->_seq_raw;
-		fwd->tcp._flags = bwd->tcp._flags = TcpHdr::flags_rst; // | TcpHdr::flags_ack;
+		fwd->tcp._flags = bwd->tcp._flags = TcpHdr::flags_rst | TcpHdr::flags_ack;
 
 		// calculate ip and tcp checksum
 		fwd->ip._checksum = IpHdr::calcIpChecksum(&(fwd->ip));
