@@ -3,6 +3,7 @@
 
 #include "hpch.h"
 
+#include "iphdr.h"
 
 struct TcpHdr {
 	uint16_t _srcport;
@@ -32,7 +33,7 @@ struct TcpHdr {
 		dns = 53,
 		tls = 443
 	};
-	enum : uint16_t {
+	enum : uint8_t {
 		flags_ack = 0x10,
 		flags_psh = 0x8,
 		flags_rst = 0x4,
