@@ -11,3 +11,5 @@
 pcap_t* open_pcap(char* interface);
 
 uint8_t hex2int(char n);
+
+#endif // UTILITY_H_
