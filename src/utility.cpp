@@ -45,15 +45,3 @@ void send_packet(int socket, struct sockaddr_in addr_in_, TxPacket *pkt) {
 uint8_t hex2int(char n) {
 	return ('0' <= n && n <= '9') ? n - '0' : n - 'a' + 10;
 }
-
-bool custom_filter(RxOpenVpnTcpPacket *pkt) {
-	if(pkt->eth->type() != EthHdr::ipv4) return true;
-	if(pkt->ip->proto() != IpHdr::tcp) return true;
-	if(pkt->tcp->flags() != TcpHdr::flags_ack) return true;
-	
-	// vs Proton VPN with Open VPN (TCP)
-	//if(pkt->tcp->payload_len(pkt->ip, pkt->tcp) != pkt->openvpntcp->plen() + 2) return true;
-	//if(pkt->openvpntcp->type() != 0x48) return true;
-	
-	return false;
-}
