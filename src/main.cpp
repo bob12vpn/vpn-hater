@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
 	RawSock send_socket;
 	if(!send_socket.open(send_interface)) return -1;
 	
-	int pkt_cnt = 0, res;
+	int pkt_cnt = 0;
 	RxOpenVpnTcpPacket *rxPacket = new RxOpenVpnTcpPacket;
 	TxPacket *fwd = new TxPacket;
 	TxPacket *bwd = new TxPacket;
