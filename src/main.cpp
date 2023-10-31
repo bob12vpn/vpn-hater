@@ -4,6 +4,7 @@
 #include "utility.h"
 #include "gtrace.h"
 #include "filter.h"
+#include "rawsock.h"
 
 void usage() {
 	printf("usage: sudo ./block-packet <mirror interface> <send interface>\n");
@@ -24,14 +25,12 @@ int main(int argc, char* argv[]) {
 	if(mirror_pcap == NULL) return -1;
 	GTRACE("mirror pcap is opened");
 
-	int send_socket = open_raw_socket(send_interface);
+	RawSock send_socket;
+	if(rawsock.open(send_interface)) {
+		return -1;
+	}
 	if(send_socket == -1) return -1;
-	GTRACE("send socket is opened");
 	
-	struct sockaddr_in addr_in_;
-	memset(&addr_in_, 0, sizeof(addr_in_));
-	addr_in_.sin_family = AF_INET;
-
 	int pkt_cnt = 0, res;
 	RxOpenVpnTcpPacket *rxPacket = new RxOpenVpnTcpPacket;
 	TxPacket *fwd = new TxPacket;
@@ -39,9 +38,8 @@ int main(int argc, char* argv[]) {
 	struct pcap_pkthdr* header;
 	const uint8_t* packet;
 	while(true) {
-		res = pcap_next_ex(mirror_pcap, &header, &packet);
-		if(res == 0) {
-			usleep(500);
+		if(!pcap_next_ex(mirror_pcap, &header, &packet)) {
+			usleep(300);
 			continue;
 		}
 		pkt_cnt++;
@@ -62,7 +60,7 @@ int main(int argc, char* argv[]) {
 		fwd->tcp._hdr_len = 5;
 
 		// modify mac address
-		// deleted bacause of raw socket
+		// deleted bacause raw socket doesn't need mac
 
 		// modify ip header
 		fwd->ip._len = bwd->ip._len = ntohs(rxPacket->ip->ip_size() + rxPacket->tcp->tcp_size());
@@ -83,10 +81,8 @@ int main(int argc, char* argv[]) {
 		bwd->tcp._checksum = TcpHdr::calcTcpChecksum(&(bwd->ip), &(bwd->tcp));
 		
 		// send packet
-		send_packet(send_socket, addr_in_, fwd);
-		GTRACE("send forward packet");
-		send_packet(send_socket, addr_in_, bwd);
-		GTRACE("send backward packet");
+		send_socket.sendto(fwd, VAR_NAME(fwd));
+		send_socket.sendto(bwd, VAR_NAME(bwd));
 
 		// print counter
 		GTRACE("========%d========", pkt_cnt);
@@ -96,7 +92,7 @@ int main(int argc, char* argv[]) {
 	delete fwd;
 	delete bwd;
 	pcap_close(mirror_pcap);
-	::close(send_socket);
+	send_socket.close();
 	
 	return 0;
 }
