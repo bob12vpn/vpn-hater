@@ -91,7 +91,9 @@ int main(int argc, char* argv[]) {
 		GTRACE("========%d========", pkt_cnt);
 	}
 
-	delete rxPacket, fwd, bwd;
+	delete rxPacket;
+	delete fwd;
+	delete bwd;
 	pcap_close(mirror_pcap);
 	::close(send_socket);
 	

@@ -25,7 +25,7 @@ int open_raw_socket(char* interface) {
 		return -1;
 	}
 
-	if(interface != "") {
+	if(strlen(interface) != 0) {
 		res = ::setsockopt(send_socket, SOL_SOCKET, SO_BINDTODEVICE, interface, strlen(interface));
 		if(res < 0) {
 			GTRACE("setsockopt(SO_BINDTODEVICE) Failed");
