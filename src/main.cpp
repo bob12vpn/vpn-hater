@@ -3,6 +3,7 @@
 #include "packet.h"
 #include "utility.h"
 #include "gtrace.h"
+#include "filter.h"
 
 void usage() {
 	printf("usage: sudo ./block-packet <mirror interface> <send interface>\n");
