@@ -77,8 +77,8 @@ int main(int argc, char* argv[]) {
 		bwd->tcp._checksum = TcpHdr::calcTcpChecksum(&(bwd->ip), &(bwd->tcp));
 		
 		// send packet
-		send_socket.sendto(fwd, VAR_NAME(fwd));
-		send_socket.sendto(bwd, VAR_NAME(bwd));
+		send_socket.sendto(fwd);
+		send_socket.sendto(bwd);
 
 		// print counter
 		GTRACE("========%d========", pkt_cnt);

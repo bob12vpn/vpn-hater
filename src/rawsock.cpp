@@ -40,12 +40,12 @@ bool RawSock::close() {
     return true;
 }
 
-bool RawSock::sendto(TxPacket *pkt, char *msg) {
+bool RawSock::sendto(TxPacket *pkt) {
     addr_in_.sin_addr.s_addr = pkt->ip.dst();
     if(::sendto(socket, &(pkt->ip), pkt->ip.len(), 0, (struct sockaddr*)&addr_in_, sizeof(struct sockaddr_in)) == -1) {
         GTRACE("[Error] send packet is failed");
         return false;
     }
-    GTRACE("send %s packet", msg);
+    GTRACE("packet is sended");
     return true;
 }
