@@ -17,7 +17,7 @@ bool RawSock::open(char* interface) {
     }
     
     if(strlen(interface) != 0) {
-        if(::setsockopt(send_socket, SOL_SOCKET, SO_BINDTODEVICE, interface, strlen(interface))) {
+        if(::setsockopt(socket, SOL_SOCKET, SO_BINDTODEVICE, interface, strlen(interface))) {
             GTRACE("setsockopt(SO_BINDTODEVICE) Failed");
             return false;
         }
@@ -40,7 +40,7 @@ bool RawSock::close() {
     return true;
 }
 
-bool RawSock::sendto(TxPAcket *pkt, char *msg = "") {
+bool RawSock::sendto(TxPacket *pkt, char *msg) {
     addr_in_.sin_addr.s_addr = pkt->ip.dst();
     if(::sendto(socket, &(pkt->ip), pkt->ip.len(), 0, (struct sockaddr*)&addr_in_, sizeof(struct sockaddr_in)) == -1) {
         GTRACE("[Error] send packet is failed");

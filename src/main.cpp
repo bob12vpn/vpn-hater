@@ -23,13 +23,9 @@ int main(int argc, char* argv[]) {
 
 	pcap_t* mirror_pcap = open_pcap(mirror_interface);
 	if(mirror_pcap == NULL) return -1;
-	GTRACE("mirror pcap is opened");
 
 	RawSock send_socket;
-	if(rawsock.open(send_interface)) {
-		return -1;
-	}
-	if(send_socket == -1) return -1;
+	if(send_socket.open(send_interface)) return -1;
 	
 	int pkt_cnt = 0, res;
 	RxOpenVpnTcpPacket *rxPacket = new RxOpenVpnTcpPacket;
