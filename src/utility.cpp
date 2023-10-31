@@ -7,6 +7,7 @@ pcap_t* open_pcap(char* interface) {
 		fprintf(stderr, "pcap_open_live(%s) return null - %s\n", interface, errbuf);
 		return NULL;
 	}
+	GTRACE("pcap is opened");
 	return pcap;
 }
 
