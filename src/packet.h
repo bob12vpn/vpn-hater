@@ -7,6 +7,7 @@
 #include "headers/udphdr.h"
 #include "headers/openvpntcphdr.h"
 
+#pragma pack(push, 1)
 struct RxPacket {
     struct EthHdr *eth{nullptr};
     
@@ -20,7 +21,6 @@ struct RxOpenVpnTcpPacket : RxPacket {
     struct OpenVpnTcpHdr *openvpntcp{nullptr};
 };
 
-#pragma pack(push, 1)
 struct TxPacket {
     // raw socket does not need ETH
     // struct EthHdr eth;

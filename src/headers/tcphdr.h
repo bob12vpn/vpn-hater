@@ -5,6 +5,7 @@
 
 #include "iphdr.h"
 
+#pragma pack(push, 1)
 struct TcpHdr {
 	uint16_t _srcport;
 	uint16_t _dstport;
@@ -41,5 +42,6 @@ struct TcpHdr {
 		flags_fin = 0x1
 	};
 };
+#pragma pack(pop)
 
 #endif // TCPHDR_H_

@@ -6,7 +6,7 @@
 
 #define	UDP_SIZE	8
 
-
+#pragma pack(push, 1)
 struct UdpHdr {
 	uint16_t _srcport;
 	uint16_t _dstport;
@@ -23,5 +23,6 @@ struct UdpHdr {
 		tls = 443
 	};
 };
+#pragma pack(pop)
 
 #endif // UDPHDR_H_

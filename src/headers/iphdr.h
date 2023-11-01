@@ -3,7 +3,7 @@
 
 #include "hpch.h"
 
-
+#pragma pack(push, 1)
 struct IpHdr {
 	uint8_t _hdr_len:4,
 		_version:4;
@@ -40,5 +40,6 @@ struct IpHdr {
 		udp = 17
 	};
 };
+#pragma pack(pop)
 
 #endif // IPHDR_H_
