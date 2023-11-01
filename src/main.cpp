@@ -28,11 +28,13 @@ int main(int argc, char* argv[]) {
 	if(!send_socket.open(send_interface)) return -1;
 	
 	int pkt_cnt = 0;
-	RxOpenVpnTcpPacket *rxPacket;
+	RxOpenVpnTcpPacket *rxPacket = new RxOpenVpnTcpPacket;
 	TxPacket *fwd = new TxPacket;
 	TxPacket *bwd = new TxPacket;
 	struct pcap_pkthdr* header;
 	const uint8_t* packet;
+		uint8_t ethtest[15];
+		ethtest[14] = '\0';
 	while(true) {
 		if(!pcap_next_ex(mirror_pcap, &header, &packet)) {
 			usleep(300);
@@ -40,11 +42,15 @@ int main(int argc, char* argv[]) {
 		}
 		pkt_cnt++;
 
+		memcpy(ethtest, packet, ETH_SIZE);
+		for(int i=0; i<14; i++) printf("%02x ", ethtest[i]);
+		puts("");
+
 		// initialize
 		memcpy(rxPacket->eth, (uint8_t*)packet, ETH_SIZE);
 		memcpy(rxPacket->ip, (uint8_t*)rxPacket->eth + ETH_SIZE, IP_SIZE);
-		memcpy(rxPacket->tcp, (uint8_t*)rxPacket->ip + rxPacket->ip->ip_size());
-		memcpy(rxPackeet->openvpntcp, (uint8_t*)rxPacket->tcp + rxPacket->tcp->tcp_size(), OPENVPNTCP_SIZE);
+		memcpy(rxPacket->tcp, (uint8_t*)rxPacket->ip + rxPacket->ip->ip_size(), TCP_SIZE);
+		memcpy(rxPacket->openvpntcp, (uint8_t*)rxPacket->tcp + rxPacket->tcp->tcp_size(), OPENVPNTCP_SIZE);
 
 		// you can modify custom_filter() function
 		// it must return true, when a packet is recieved what you don't need
@@ -84,6 +90,7 @@ int main(int argc, char* argv[]) {
 		GTRACE("========%d========", pkt_cnt);
 	}
 
+	delete rxPacket;
 	delete fwd;
 	delete bwd;
 	pcap_close(mirror_pcap);
