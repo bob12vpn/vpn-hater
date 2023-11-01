@@ -3,6 +3,10 @@
 
 #include "hpch.h"
 
+
+#define IP_SIZE 20
+
+
 #pragma pack(push, 1)
 struct IpHdr {
 	uint8_t _hdr_len:4,

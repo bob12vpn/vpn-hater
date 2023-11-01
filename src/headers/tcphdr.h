@@ -5,6 +5,10 @@
 
 #include "iphdr.h"
 
+
+#define TCP_SIZE 20
+
+
 #pragma pack(push, 1)
 struct TcpHdr {
 	uint16_t _srcport;

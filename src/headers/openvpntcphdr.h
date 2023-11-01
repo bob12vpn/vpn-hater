@@ -4,6 +4,9 @@
 #include "hpch.h"
 
 
+#define OPENVPNTCP_SIZE 6
+
+
 #pragma pack(push, 1)
 struct OpenVpnTcpHdr {
 	uint16_t _plen;

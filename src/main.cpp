@@ -41,10 +41,10 @@ int main(int argc, char* argv[]) {
 		pkt_cnt++;
 
 		// initialize
-		rxPacket->eth = reinterpret_cast<const struct EthHdr*>(packet);
-		rxPacket->ip = reinterpret_cast<const struct IpHdr*>(rxPacket->eth + ETH_SIZE);
-		rxPacket->tcp = reinterpret_cast<const struct TcpHdr*>(rxPacket->ip + rxPacket->ip->ip_size());
-		rxPacket->openvpntcp = reinterpret_cast<const struct OpenVpnTcpHdr*>(rxPacket->tcp + rxPacket->tcp->tcp_size());
+		memcpy(rxPacket->eth, packet, ETH_SIZE);
+		memcpy(rxPacket->ip, rxPacket->eth + ETH_SIZE, IP_SIZE);
+		memcpy(rxPacket->tcp, rxPacket->ip + rxPacket->ip->ip_size());
+		memcpy(rxPackeet->openvpntcp, rxPacket->tcp + rxPacket->tcp->tcp_size(), OPENVPNTCP_SIZE);
 
 		// you can modify custom_filter() function
 		// it must return true, when a packet is recieved what you don't need
