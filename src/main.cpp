@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 	if(!send_socket.open(send_interface)) return -1;
 	
 	int pkt_cnt = 0;
-	RxOpenVpnTcpPacket *rxPacket = new RxOpenVpnTcpPacket;
+	RxOpenVpnTcpPacket *rxPacket;
 	TxPacket *fwd = new TxPacket;
 	TxPacket *bwd = new TxPacket;
 	struct pcap_pkthdr* header;
@@ -41,10 +41,10 @@ int main(int argc, char* argv[]) {
 		pkt_cnt++;
 
 		// initialize
-		rxPacket->eth = (struct EthHdr*)(packet);
-		rxPacket->ip  = (struct IpHdr* )(packet + ETH_SIZE);
-		rxPacket->tcp = (struct TcpHdr*)(packet + ETH_SIZE + rxPacket->ip->ip_size());
-		rxPacket->openvpntcp = (struct OpenVpnTcpHdr*)(packet + ETH_SIZE + rxPacket->ip->ip_size() + rxPacket->tcp->tcp_size());
+		rxPacket->eth = reinterpret_cast<struct EthHdr*>(packet);
+		rxPacket->ip = reinterpret_cast<struct IpHdr*>(rxPacket->eth + ETH_SIZE);
+		rxPacket->tcp = reinterpret_cast<struct TcpHdr*>(rxPacket->ip + rxPacket->ip->ip_size());
+		rxPacket->openvpntcp = reinterpret_cast<struct OpenVpnTcpHdr*>(rxPacket->tcp + rxPacket->tcp->tcp_size());
 
 		// you can modify custom_filter() function
 		// it must return true, when a packet is recieved what you don't need
@@ -84,7 +84,6 @@ int main(int argc, char* argv[]) {
 		GTRACE("========%d========", pkt_cnt);
 	}
 
-	delete rxPacket;
 	delete fwd;
 	delete bwd;
 	pcap_close(mirror_pcap);

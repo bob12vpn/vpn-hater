@@ -15,10 +15,32 @@ struct RxPacket {
     
     struct TcpHdr *tcp{nullptr};
     struct UdpHdr *udp{nullptr};
+    
+    RxPacket() {
+        eth = new EthHdr;
+        ip = new IpHdr;
+        tcp = new TcpHdr;
+        udp = new UdpHdr;
+    }
+    
+    ~RxPacket() {
+        delete eth;
+        delete ip;
+        delete tcp;
+        delete udp;
+    }
 };
 
 struct RxOpenVpnTcpPacket : RxPacket {
     struct OpenVpnTcpHdr *openvpntcp{nullptr};
+    
+    RxOpenVpnTcpPacket() : RxPacket() {
+        openvpntcp = new OpenVpnTcpHdr;
+    }
+    
+    ~RxOpenVpnTcpPacket() {
+        delete openvpntcp;
+    }
 };
 
 struct TxPacket {
