@@ -9,12 +9,12 @@
 
 #pragma pack(push, 1)
 struct RxPacket {
-    const struct EthHdr *eth{nullptr};
+    struct EthHdr *eth{nullptr};
     
-    const struct IpHdr *ip{nullptr};
+    struct IpHdr *ip{nullptr};
     
-    const struct TcpHdr *tcp{nullptr};
-    const struct UdpHdr *udp{nullptr};
+    struct TcpHdr *tcp{nullptr};
+    struct UdpHdr *udp{nullptr};
     
     RxPacket() {
         eth = new EthHdr;
@@ -32,7 +32,7 @@ struct RxPacket {
 };
 
 struct RxOpenVpnTcpPacket : RxPacket {
-    const struct OpenVpnTcpHdr *openvpntcp{nullptr};
+    struct OpenVpnTcpHdr *openvpntcp{nullptr};
     
     RxOpenVpnTcpPacket() : RxPacket() {
         openvpntcp = new OpenVpnTcpHdr;
