@@ -33,28 +33,24 @@ int main(int argc, char* argv[]) {
 	TxPacket *bwd = new TxPacket;
 	struct pcap_pkthdr* header;
 	const uint8_t* packet;
-		uint8_t ethtest[15];
-		ethtest[14] = '\0';
 	while(true) {
-		if(!pcap_next_ex(mirror_pcap, &header, &packet)) {
-			usleep(300);
+		int res = pcap_next_ex(mirror_pcap, &header, &packet);
+		if(res == 0) {
+			usleep(100);
 			continue;
 		}
-		pkt_cnt++;
 
-		memcpy(ethtest, packet, ETH_SIZE);
-		for(int i=0; i<14; i++) printf("%02x ", ethtest[i]);
-		puts("");
+		pkt_cnt++;
 
 		// initialize
 		memcpy(rxPacket->eth, (uint8_t*)packet, ETH_SIZE);
-		memcpy(rxPacket->ip, (uint8_t*)rxPacket->eth + ETH_SIZE, IP_SIZE);
-		memcpy(rxPacket->tcp, (uint8_t*)rxPacket->ip + rxPacket->ip->ip_size(), TCP_SIZE);
-		memcpy(rxPacket->openvpntcp, (uint8_t*)rxPacket->tcp + rxPacket->tcp->tcp_size(), OPENVPNTCP_SIZE);
+		memcpy(rxPacket->ip, (uint8_t*)packet + ETH_SIZE, IP_SIZE);
+		memcpy(rxPacket->tcp, (uint8_t*)packet + ETH_SIZE + rxPacket->ip->ip_size(), TCP_SIZE);
+		memcpy(rxPacket->openvpntcp, (uint8_t*)packet + ETH_SIZE + rxPacket->ip->ip_size() + rxPacket->tcp->tcp_size(), OPENVPNTCP_SIZE);
 
 		// you can modify custom_filter() function
 		// it must return true, when a packet is recieved what you don't need
-		if(custom_filter(rxPacket)) continue;
+		if(not_want_filter(rxPacket)) continue;
 
 		// copy packet
 		fwd->ip  = bwd->ip  = *(rxPacket->ip);

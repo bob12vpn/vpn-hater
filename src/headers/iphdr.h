@@ -28,8 +28,8 @@ struct IpHdr {
 		uint32_t _dst;
 	};
 
-	uint8_t version() { return _hdr_len; }
-	uint8_t hdr_len() { return _version; }
+	uint8_t hdr_len() { return _hdr_len; }
+	uint8_t version() { return _version; }
 	uint16_t len() { return ntohs(_len); }
 	uint8_t proto() { return _proto; }
 	uint16_t checksum() { return ntohs(_checksum); }

@@ -5,6 +5,6 @@
 
 #include "packet.h"
 
-bool custom_filter(RxOpenVpnTcpPacket *pkt);
+bool not_want_filter(RxOpenVpnTcpPacket *pkt);
 
 #endif // FILTER_H_
