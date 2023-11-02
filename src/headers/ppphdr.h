@@ -15,7 +15,7 @@ struct PppHdr {
 
     uint8_t address() { return _address; }
     uint8_t control() { return _control; }
-    uint16_t sequence_number() { return ntohs(_sequence_number); }
+    uint16_t protocol() { return ntohs(_protocol); }
     
 	enum : uint16_t {
 		lcp = 0xc021

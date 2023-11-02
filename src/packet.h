@@ -63,7 +63,7 @@ struct RxPppPacket : RxPacket {
         delete ppp;
         delete lcp;
     }
-}
+};
 
 struct TxPacket {
     // raw socket does not need ETH
