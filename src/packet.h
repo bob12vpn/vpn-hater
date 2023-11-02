@@ -5,6 +5,9 @@
 #include "headers/iphdr.h"
 #include "headers/tcphdr.h"
 #include "headers/udphdr.h"
+#include "headers/grehdr.h"
+#include "headers/ppphdr.h"
+#include "headers/lcphdr.h"
 #include "headers/openvpntcphdr.h"
 
 #pragma pack(push, 1)
@@ -16,11 +19,14 @@ struct RxPacket {
     struct TcpHdr *tcp{nullptr};
     struct UdpHdr *udp{nullptr};
     
+    struct GreHdr *gre{nullptr};
+    
     RxPacket() {
         eth = new EthHdr;
         ip = new IpHdr;
         tcp = new TcpHdr;
         udp = new UdpHdr;
+        gre = new GreHdr;
     }
     
     ~RxPacket() {
@@ -28,6 +34,7 @@ struct RxPacket {
         delete ip;
         delete tcp;
         delete udp;
+        delete gre;
     }
 };
 
@@ -42,6 +49,21 @@ struct RxOpenVpnTcpPacket : RxPacket {
         delete openvpntcp;
     }
 };
+
+struct RxPppPacket : RxPacket {
+    struct PppHdr *ppp{nullptr};
+    struct LcpHdr *lcp{nullptr};
+    
+    RxPppPacket() : RxPacket() {
+        ppp = new PppHdr;
+        lcp = new LcpHdr;
+    }
+    
+    ~RxPppPacket() {
+        delete ppp;
+        delete lcp;
+    }
+}
 
 struct TxPacket {
     // raw socket does not need ETH
