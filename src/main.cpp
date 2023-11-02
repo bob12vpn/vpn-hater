@@ -7,8 +7,9 @@
 #include "rawsock.h"
 
 void usage() {
-	printf("usage: sudo ./block-packet <mirror interface> <send interface>\n");
+	printf("usage: sudo ./block-packet <mirror interface> <send interface> [sni list]\n");
 	printf("example: sudo ./block-packet enp0s3 eth0\n");
+	printf("example: sudo ./block-packet enp0s3 eth0 sni.txt\n");
 }
 
 int main(int argc, char* argv[]) {
@@ -20,6 +21,13 @@ int main(int argc, char* argv[]) {
 	}
 	char* mirror_interface = argv[1];
 	char* send_interface = argv[2];
+	std::unordered_set<std::string> sni_list;
+	if(argc == 4) {
+		bool success = laod_sni(argv[3], sni_list);
+		if(!success) {
+			return -1;
+		}
+	}
 
 	pcap_t* mirror_pcap = open_pcap(mirror_interface);
 	if(mirror_pcap == NULL) return -1;

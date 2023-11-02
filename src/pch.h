@@ -2,13 +2,12 @@
 #define PCH_H_
 
 
-// C++
 #include <fstream>
 #include <vector>
 #include <string>
 #include <utility>
+#include <unordered_set>
 
-// C
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

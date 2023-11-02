@@ -14,3 +14,18 @@ pcap_t* open_pcap(char* interface) {
 uint8_t hex2int(char n) {
 	return ('0' <= n && n <= '9') ? n - '0' : n - 'a' + 10;
 }
+
+bool load_sni(char* sni_file_name, std::unordered_set<std::string> &ret) {
+	std::ifstream sni_file(sni_file_name);
+	if(!sni_file) {
+		GREACE("loading sni from '%s' is failed", sni_file_name);
+		return false;
+	}
+	std::vector<std::string> sni_vec;
+	std::string line;
+	while(std::getline(sni_file, line)) {
+		sni_vec.push_back(line);
+	}
+	ret = std::unordered_set<std::string>(sni_vec.begin(), sni_vec.end());
+	return true;
+}
