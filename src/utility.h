@@ -6,13 +6,13 @@
 #include "packet.h"
 #include "gtrace.h"
 
-pcap_t* open_pcap(char* interface);
+pcap_t* open_pcap(char*);
 
-uint8_t hex2int(char n);
+uint8_t hex2int(char);
 
-bool load_sni(char* sni_file_name, std::unordered_set<std::string> &ret);
+bool load_sni(char*, std::unordered_set<std::string>&);
 
-void parsing_packet(RxPacket *dst, const uint8_t *src);
-void parsing_packet(RxOpenVpnTcpPacket *dst, const uint8_t *src);
+void parsing_packet(RxPacket*, const uint8_t*);
+void parsing_packet(RxOpenVpnTcpPacket*, const uint8_t*);
 
 #endif // UTILITY_H_

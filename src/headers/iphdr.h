@@ -37,7 +37,7 @@ struct IpHdr {
 	uint32_t dst() { return _dst; }	// little endian, same reason
 
 	uint16_t ip_size() { return (uint16_t)hdr_len() * 4; }
-	static uint16_t calcIpChecksum(IpHdr *ip);
+	static uint16_t calcIpChecksum(IpHdr*);
     
 	enum : uint16_t {
 		tcp = 6,

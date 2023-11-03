@@ -10,10 +10,10 @@ struct RawSock {
     int socket = 0;
     struct sockaddr_in addr_in_;
     
-    bool open(char* interface);
+    bool open(char*);
     bool close();
     
-    bool sendto(TxPacket *pkt);
+    bool sendto(TxPacket*);
 };
 
 #endif // RAWSOK_H_

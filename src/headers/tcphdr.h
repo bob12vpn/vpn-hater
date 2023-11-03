@@ -31,8 +31,8 @@ struct TcpHdr {
 	uint16_t checksum() { return ntohs(_checksum); }
 
 	uint16_t tcp_size() { return (uint16_t)hdr_len() * 4; }
-	static uint16_t payload_len(IpHdr *ip, TcpHdr *tcp);
-	static uint16_t calcTcpChecksum(IpHdr *ip, TcpHdr *tcp);
+	static uint16_t payload_len(IpHdr*, TcpHdr*);
+	static uint16_t calcTcpChecksum(IpHdr*, TcpHdr*);
 	
     enum : uint16_t {
 		dns = 53,
