@@ -51,10 +51,7 @@ int main(int argc, char* argv[]) {
 		pkt_cnt++;
 
 		// initialize
-		memcpy(rxPacket->eth, (uint8_t*)packet, ETH_SIZE);
-		memcpy(rxPacket->ip, (uint8_t*)packet + ETH_SIZE, IP_SIZE);
-		memcpy(rxPacket->tcp, (uint8_t*)packet + ETH_SIZE + rxPacket->ip->ip_size(), TCP_SIZE);
-		memcpy(rxPacket->openvpntcp, (uint8_t*)packet + ETH_SIZE + rxPacket->ip->ip_size() + rxPacket->tcp->tcp_size(), OPENVPNTCP_SIZE);
+		parsing_packet(rxPacket, packet);
 
 		// you can modify custom_filter() function
 		// it must return true, when a packet is recieved what you don't need
