@@ -5,6 +5,10 @@
 
 #include "packet.h"
 
-bool not_want_filter(RxOpenVpnTcpPacket *pkt);
+bool isTcp(RxPacket *pkt);
+bool isTcp(RxOpenVpnTcpPacket *pkt);
+
+bool isOpenVpnTcp(RxOpenVpnTcpPacket *pkt);
+
 
 #endif // FILTER_H_
