@@ -30,6 +30,12 @@ bool load_sni(char* sni_file_name, std::unordered_set<std::string> &ret) {
 	return true;
 }
 
+void parsing_packet(RxPacket *dst, const uint8_t *src) {
+	memcpy(dst->eth, (uint8_t*)src, ETH_SIZE);
+	memcpy(dst->ip, (uint8_t*)src + ETH_SIZE, IP_SIZE);
+	memcpy(dst->tcp, (uint8_t*)src + ETH_SIZE + dst->ip->ip_size(), TCP_SIZE);
+}
+
 void parsing_packet(RxOpenVpnTcpPacket *dst, const uint8_t *src) {
 	memcpy(dst->eth, (uint8_t*)src, ETH_SIZE);
 	memcpy(dst->ip, (uint8_t*)src + ETH_SIZE, IP_SIZE);
