@@ -2,3 +2,4 @@ block-packet
 *.swp
 *.o
 .vscode
+*.log

@@ -18,7 +18,7 @@ uint8_t hex2int(char n) {
 bool load_sni(char* sni_file_name, std::unordered_set<std::string> &ret) {
 	std::ifstream sni_file(sni_file_name);
 	if(!sni_file) {
-		GREACE("loading sni from '%s' is failed", sni_file_name);
+		GTRACE("loading sni from '%s' is failed", sni_file_name);
 		return false;
 	}
 	std::vector<std::string> sni_vec;

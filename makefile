@@ -4,7 +4,7 @@ HDRDIR=./src/headers
 SRCS=$(wildcard $(HDRDIR)/*.cpp) $(wildcard $(SRCDIR)/*.cpp)
 OBJS=$(SRCS:%.cpp=%.o)
 
-CPPFLAGS=-Wall -Wextra
+CPPFLAGS=-Wall -Wextra -O2 -g
 LDLIBS=-lpcap
 
 all: $(TARGET)

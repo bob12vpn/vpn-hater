@@ -13,6 +13,7 @@ void usage() {
 }
 
 int main(int argc, char* argv[]) {
+	gtrace_default("127.0.0.1", 8908, 1, "block-packet.log");
 	GTRACE("Logging level : Message");
 
 	if(argc < 3) {
@@ -55,7 +56,7 @@ int main(int argc, char* argv[]) {
 
 		// you can modify custom_filter() function
 		// it must return true, when a packet is recieved what you don't need
-		if(not_want_filter(rxPacket)) continue;
+		if(isTcp(rxPacket)) continue;
 
 		// copy packet
 		fwd->ip  = bwd->ip  = *(rxPacket->ip);
