@@ -8,5 +8,5 @@ bool not_want_filter(RxOpenVpnTcpPacket *pkt) {
 	if(pkt->tcp->payload_len(pkt->ip, pkt->tcp) != pkt->openvpntcp->plen() + 2) return true;
 	if(pkt->openvpntcp->type() != 0x48) return true;
         
-        return false;
+    return false;
 }

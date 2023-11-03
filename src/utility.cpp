@@ -4,7 +4,7 @@ pcap_t* open_pcap(char* interface) {
 	char errbuf[PCAP_ERRBUF_SIZE];	
 	pcap_t* pcap = pcap_open_live(interface, BUFSIZ, 1, -1, errbuf);
 	if(pcap == NULL) {
-		fprintf(stderr, "pcap_open_live(%s) return null - %s\n", interface, errbuf);
+		GTRACE("pcap_open_live(%s) return null - %s", interface, errbuf);
 		return NULL;
 	}
 	GTRACE("pcap is opened");

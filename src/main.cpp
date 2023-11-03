@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
 	char* send_interface = argv[2];
 	std::unordered_set<std::string> sni_list;
 	if(argc == 4) {
-		bool success = laod_sni(argv[3], sni_list);
+		bool success = load_sni(argv[3], sni_list);
 		if(!success) {
 			return -1;
 		}
