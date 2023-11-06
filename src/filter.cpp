@@ -17,8 +17,8 @@ bool isTcpAck(RxOpenVpnTcpPacket *pkt) {
 }
 
 bool isOpenVpnTcp(RxOpenVpnTcpPacket *pkt) {
-	if(!isTcp(pkt)) return false;
-	if(pkt->tcphdr->payload_len(pkt->iphdr, pkt->tcphdr) != pkt->openvpntcphdr->plen() + 2) return false;
+	if(!isTcpAck(pkt)) return false;
+	if(pkt->tcphdr->payloadLen(pkt->iphdr, pkt->tcphdr) != pkt->openvpntcphdr->plen() + 2) return false;
 	if(pkt->openvpntcphdr->type() != 0x48) return false;
     return true;
 }

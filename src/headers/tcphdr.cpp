@@ -1,7 +1,7 @@
 #include "tcphdr.h"
 
 uint16_t TcpHdr::payloadLen(IpHdr *iphdr, TcpHdr *tcphdr) {
-    return iphdr->len() - iphdr->ip_size() - tcphdr->tcpHdrSize();
+    return iphdr->len() - iphdr->ipHdrSize() - tcphdr->tcpHdrSize();
 }
 
 /**
@@ -12,12 +12,12 @@ uint16_t TcpHdr::payloadLen(IpHdr *iphdr, TcpHdr *tcphdr) {
 uint16_t TcpHdr::calcTcpChecksum(IpHdr *iphdr, TcpHdr *tcphdr) {
     uint32_t ret = 0;
     uint16_t *pword = reinterpret_cast<uint16_t*>(tcphdr);
-    tcphdr->_checksum = 0;
+    tcphdr->checksum_ = 0;
     
     ret += (ntohs(iphdr->src() >> 16)) + (ntohs(iphdr->src() & 0xFFFF));
     ret += (ntohs(iphdr->dst() >> 16)) + (ntohs(iphdr->dst() & 0xFFFF));
     ret += iphdr->proto();
-    ret += tcphdr->tcp_size();
+    ret += tcphdr->tcpHdrSize();
     for(int i=0; i<tcphdr->tcpHdrSize(); i+=2) {
         ret += ntohs(*(pword + i));
     }

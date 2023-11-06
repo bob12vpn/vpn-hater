@@ -33,12 +33,12 @@ bool loadSni(char* sni_file_name, std::unordered_set<std::string> &ret) {
 void parsingPacket(RxPacket *dst, const uint8_t *src) {
 	memcpy(dst->ethhdr, (uint8_t*)src, ETH_SIZE);
 	memcpy(dst->iphdr, (uint8_t*)src + ETH_SIZE, MIN_IP_SIZE);
-	memcpy(dst->tcphdr, (uint8_t*)src + ETH_SIZE + dst->iphdr->ip_size(), MIN_TCP_SIZE);
+	memcpy(dst->tcphdr, (uint8_t*)src + ETH_SIZE + dst->iphdr->ipHdrSize(), MIN_TCP_SIZE);
 }
 
 void parsingPacket(RxOpenVpnTcpPacket *dst, const uint8_t *src) {
 	memcpy(dst->ethhdr, (uint8_t*)src, ETH_SIZE);
 	memcpy(dst->iphdr, (uint8_t*)src + ETH_SIZE, MIN_IP_SIZE);
-	memcpy(dst->tcphdr, (uint8_t*)src + ETH_SIZE + dst->iphdr->ip_size(), MIN_TCP_SIZE);
-	memcpy(dst->openvpntcphdr, (uint8_t*)src + ETH_SIZE + dst->iphdr->ip_size() + dst->tcphdr->tcp_size(), OPENVPNTCP_SIZE);
+	memcpy(dst->tcphdr, (uint8_t*)src + ETH_SIZE + dst->iphdr->ipHdrSize(), MIN_TCP_SIZE);
+	memcpy(dst->openvpntcphdr, (uint8_t*)src + ETH_SIZE + dst->iphdr->ipHdrSize() + dst->tcphdr->tcpHdrSize(), OPENVPNTCP_SIZE);
 }

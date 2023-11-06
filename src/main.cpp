@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
 		parsingPacket(rxPacket, packet);
 
 		// filter
-		if(!isTcp(rxPacket)) continue;
+		if(!isTcpAck(rxPacket)) continue;
 
 		// copy packet
 		fwd->iphdr  = bwd->iphdr  = *(rxPacket->iphdr);
@@ -94,7 +94,7 @@ int main(int argc, char* argv[]) {
 	delete rxPacket;
 	delete fwd;
 	delete bwd;
-	pcapClose(mirrorPcap);
+	pcap_close(mirrorPcap);
 	sendSocket.close();
 	
 	return 0;
