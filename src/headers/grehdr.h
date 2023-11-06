@@ -9,17 +9,17 @@
 
 #pragma pack(push, 1)
 struct GreHdr {
-	uint16_t  _flags_and_version;
-	uint16_t  _proto;
-	uint16_t _payload_length;
-    uint16_t _call_id;
-    uint32_t _sequence_number;
+	uint16_t flagsAndVersion_;
+	uint16_t proto_;
+	uint16_t payloadLength_;
+    uint16_t callId_;
+    uint32_t sequenceNumber_;
 
-	uint16_t flags_and_version() { return ntohs(_flags_and_version); }
-    uint16_t proto() { return ntohs(_proto); }
-    uint16_t payload_length() { return ntohs(_payload_length); }
-    uint16_t call_id() { return ntohs(_call_id); }
-    uint16_t sequence_number() { return ntohs(_sequence_number); }
+	uint16_t flagsAndVersion() { return ntohs(flagsAndVersion_); }
+    uint16_t proto() { return ntohs(proto_); }
+    uint16_t payload_length() { return ntohs(payloadLength_); }
+    uint16_t callId() { return ntohs(callId_); }
+    uint16_t sequenceNumber() { return ntohs(sequenceNumber_); }
     
 	enum : uint16_t {
 		ppp = 0x880b

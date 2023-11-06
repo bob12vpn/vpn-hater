@@ -41,8 +41,8 @@ bool RawSock::close() {
 }
 
 bool RawSock::sendto(TxPacket *pkt) {
-    addr_in_.sin_addr.s_addr = pkt->ip.dst();
-    if(::sendto(socket, &(pkt->ip), pkt->ip.len(), 0, (struct sockaddr*)&addr_in_, sizeof(struct sockaddr_in)) == -1) {
+    addr_in_.sin_addr.s_addr = pkt->iphdr.dst();
+    if(::sendto(socket, &(pkt->iphdr), pkt->iphdr.len(), 0, (struct sockaddr*)&addr_in_, sizeof(struct sockaddr_in)) == -1) {
         GTRACE("[Fail] %s - %d", strerror(errno), errno);
         return false;
     }

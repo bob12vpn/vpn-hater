@@ -20,83 +20,82 @@ int main(int argc, char* argv[]) {
 		usage();
 		return -1;
 	}
-	char* mirror_interface = argv[1];
-	char* send_interface = argv[2];
-	std::unordered_set<std::string> sni_list;
+	char *mirrorInterface = argv[1];
+	char *sendInterface = argv[2];
+	std::unordered_set<std::string> sniList;
 	if(argc == 4) {
-		bool success = load_sni(argv[3], sni_list);
+		bool success = loadSni(argv[3], sniList);
 		if(!success) {
 			return -1;
 		}
 	}
 
-	pcap_t* mirror_pcap = open_pcap(mirror_interface);
-	if(mirror_pcap == NULL) return -1;
+	pcap_t *mirrorPcap = openPcap(mirrorInterface);
+	if(mirrorPcap == NULL) return -1;
 
-	RawSock send_socket;
-	if(!send_socket.open(send_interface)) return -1;
+	RawSock sendSocket;
+	if(!sendSocket.open(sendInterface)) return -1;
 	
-	int pkt_cnt = 0;
+	int pktCnt = 0;
 	RxOpenVpnTcpPacket *rxPacket = new RxOpenVpnTcpPacket;
 	TxPacket *fwd = new TxPacket;
 	TxPacket *bwd = new TxPacket;
-	struct pcap_pkthdr* header;
-	const uint8_t* packet;
+	struct pcap_pkthdr *header;
+	const uint8_t *packet;
 	while(true) {
-		int res = pcap_next_ex(mirror_pcap, &header, &packet);
+		int res = pcap_next_ex(mirrorPcap, &header, &packet);
 		if(res == 0) {
 			usleep(100);
 			continue;
 		}
 
-		pkt_cnt++;
+		pktCnt++;
 
 		// initialize
-		parsing_packet(rxPacket, packet);
+		parsingPacket(rxPacket, packet);
 
-		// you can modify custom_filter() function
-		// it must return true, when a packet is recieved what you don't need
-		if(isTcp(rxPacket)) continue;
+		// filter
+		if(!isTcp(rxPacket)) continue;
 
 		// copy packet
-		fwd->ip  = bwd->ip  = *(rxPacket->ip);
-		fwd->tcp = bwd->tcp = *(rxPacket->tcp);
-		fwd->tcp._hdr_len = 5;
+		fwd->iphdr  = bwd->iphdr  = *(rxPacket->iphdr);
+		fwd->tcphdr = bwd->tcphdr = *(rxPacket->tcphdr);
+		fwd->tcphdr.hdrLen_ = 5;
 
 		// modify mac address
 		// deleted bacause raw socket doesn't need mac
 
 		// modify ip header
-		fwd->ip._len = bwd->ip._len = ntohs(rxPacket->ip->ip_size() + rxPacket->tcp->tcp_size());
-		std::swap(bwd->ip._src, bwd->ip._dst);
-		bwd->ip._ttl = 128;
+		fwd->iphdr.len_ = bwd->iphdr.len_ = ntohs(rxPacket->iphdr->ipHdrSize() + rxPacket->tcphdr->tcpHdrSize());
+		std::swap(bwd->iphdr.src_, bwd->iphdr.dst_);
+		bwd->iphdr.ttl_ = 128;
 
 		// modify tcp header
-		std::swap(bwd->tcp._srcport, bwd->tcp._dstport);
-		fwd->tcp._seq_raw = ntohl(rxPacket->tcp->seq_raw() + TcpHdr::payload_len(rxPacket->ip, rxPacket->tcp));
-		bwd->tcp._seq_raw = rxPacket->tcp->_seq_raw;
-		fwd->tcp._flags = bwd->tcp._flags = TcpHdr::flags_rst | TcpHdr::flags_ack;
+		std::swap(bwd->tcphdr.srcport_, bwd->tcphdr.dstport_);
+		fwd->tcphdr.seqRaw_ = ntohl(rxPacket->tcphdr->seqRaw() + TcpHdr::payloadLen(rxPacket->iphdr, rxPacket->tcphdr));
+		bwd->tcphdr.seqRaw_ = rxPacket->tcphdr->seqRaw_;
+		fwd->tcphdr.flags_ = bwd->tcphdr.flags_ = TcpHdr::flagsRst | TcpHdr::flagsAck;
 
 		// calculate ip and tcp checksum
-		fwd->ip._checksum = IpHdr::calcIpChecksum(&(fwd->ip));
-		bwd->ip._checksum = IpHdr::calcIpChecksum(&(bwd->ip));
+		fwd->iphdr.checksum_ = IpHdr::calcIpChecksum(&(fwd->iphdr));
+		bwd->iphdr.checksum_ = IpHdr::calcIpChecksum(&(bwd->iphdr));
 
-		fwd->tcp._checksum = TcpHdr::calcTcpChecksum(&(fwd->ip), &(fwd->tcp));
-		bwd->tcp._checksum = TcpHdr::calcTcpChecksum(&(bwd->ip), &(bwd->tcp));
+		fwd->tcphdr.checksum_ = TcpHdr::calcTcpChecksum(&(fwd->iphdr), &(fwd->tcphdr));
+		bwd->tcphdr.checksum_ = TcpHdr::calcTcpChecksum(&(bwd->iphdr), &(bwd->tcphdr));
 		
 		// send packet
-		send_socket.sendto(fwd);
-		send_socket.sendto(bwd);
+		sendSocket.sendto(fwd);
+		sendSocket.sendto(bwd);
 
 		// print counter
-		GTRACE("========%d========", pkt_cnt);
+		GTRACE("========%d========", pktCnt);
 	}
 
 	delete rxPacket;
 	delete fwd;
 	delete bwd;
-	pcap_close(mirror_pcap);
-	send_socket.close();
+	pcapClose(mirrorPcap);
+	sendSocket.close();
 	
 	return 0;
 }

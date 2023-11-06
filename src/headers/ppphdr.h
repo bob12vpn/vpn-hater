@@ -9,13 +9,13 @@
 
 #pragma pack(push, 1)
 struct PppHdr {
-	uint8_t _address;
-    uint8_t _control;
-    uint16_t _protocol;
+	uint8_t address_;
+    uint8_t control_;
+    uint16_t protocol_;
 
-    uint8_t address() { return _address; }
-    uint8_t control() { return _control; }
-    uint16_t protocol() { return ntohs(_protocol); }
+    uint8_t address() { return address_; }
+    uint8_t control() { return control_; }
+    uint16_t protocol() { return ntohs(protocol_); }
     
 	enum : uint16_t {
 		lcp = 0xc021

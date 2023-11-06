@@ -1,6 +1,6 @@
 #include "utility.h"
 
-pcap_t* open_pcap(char* interface) {
+pcap_t* openPcap(char* interface) {
 	char errbuf[PCAP_ERRBUF_SIZE];	
 	pcap_t* pcap = pcap_open_live(interface, BUFSIZ, 1, -1, errbuf);
 	if(pcap == NULL) {
@@ -15,7 +15,7 @@ uint8_t hex2int(char n) {
 	return ('0' <= n && n <= '9') ? n - '0' : n - 'a' + 10;
 }
 
-bool load_sni(char* sni_file_name, std::unordered_set<std::string> &ret) {
+bool loadSni(char* sni_file_name, std::unordered_set<std::string> &ret) {
 	std::ifstream sni_file(sni_file_name);
 	if(!sni_file) {
 		GTRACE("loading sni from '%s' is failed", sni_file_name);
@@ -30,15 +30,15 @@ bool load_sni(char* sni_file_name, std::unordered_set<std::string> &ret) {
 	return true;
 }
 
-void parsing_packet(RxPacket *dst, const uint8_t *src) {
-	memcpy(dst->eth, (uint8_t*)src, ETH_SIZE);
-	memcpy(dst->ip, (uint8_t*)src + ETH_SIZE, IP_SIZE);
-	memcpy(dst->tcp, (uint8_t*)src + ETH_SIZE + dst->ip->ip_size(), TCP_SIZE);
+void parsingPacket(RxPacket *dst, const uint8_t *src) {
+	memcpy(dst->ethhdr, (uint8_t*)src, ETH_SIZE);
+	memcpy(dst->iphdr, (uint8_t*)src + ETH_SIZE, MIN_IP_SIZE);
+	memcpy(dst->tcphdr, (uint8_t*)src + ETH_SIZE + dst->iphdr->ip_size(), MIN_TCP_SIZE);
 }
 
-void parsing_packet(RxOpenVpnTcpPacket *dst, const uint8_t *src) {
-	memcpy(dst->eth, (uint8_t*)src, ETH_SIZE);
-	memcpy(dst->ip, (uint8_t*)src + ETH_SIZE, IP_SIZE);
-	memcpy(dst->tcp, (uint8_t*)src + ETH_SIZE + dst->ip->ip_size(), TCP_SIZE);
-	memcpy(dst->openvpntcp, (uint8_t*)src + ETH_SIZE + dst->ip->ip_size() + dst->tcp->tcp_size(), OPENVPNTCP_SIZE);
+void parsingPacket(RxOpenVpnTcpPacket *dst, const uint8_t *src) {
+	memcpy(dst->ethhdr, (uint8_t*)src, ETH_SIZE);
+	memcpy(dst->iphdr, (uint8_t*)src + ETH_SIZE, MIN_IP_SIZE);
+	memcpy(dst->tcphdr, (uint8_t*)src + ETH_SIZE + dst->iphdr->ip_size(), MIN_TCP_SIZE);
+	memcpy(dst->openvpntcphdr, (uint8_t*)src + ETH_SIZE + dst->iphdr->ip_size() + dst->tcphdr->tcp_size(), OPENVPNTCP_SIZE);
 }

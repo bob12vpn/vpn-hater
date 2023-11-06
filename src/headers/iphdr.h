@@ -4,39 +4,41 @@
 #include "hpch.h"
 
 
-#define IP_SIZE 20
+#define MIN_IP_SIZE 20
 
 
 #pragma pack(push, 1)
 struct IpHdr {
-	uint8_t _hdr_len:4,
-		_version:4;
-	uint8_t _dsfield;
-	uint16_t _len;
-	uint16_t _id;
-	uint16_t _flags:3,
-		 _frag_offset:13;
-	uint8_t _ttl;
-	uint8_t _proto;
-	uint16_t _checksum;
+	uint8_t hdrLen_:4,
+		version_:4;
+	uint8_t dsfield_;
+	uint16_t len_;
+	uint16_t id_;
+	uint16_t flags_:3,
+		 fragOffset_:13;
+	uint8_t ttl_;
+	uint8_t proto_;
+	uint16_t checksum_;
 	union {
-		uint8_t _srcmask[4];
-		uint32_t _src;
+		uint8_t srcmask_[4];
+		uint32_t src_;
 	};
 	union {
-		uint8_t _dstmask[4];
-		uint32_t _dst;
+		uint8_t dstmask_[4];
+		uint32_t dst_;
 	};
 
-	uint8_t hdr_len() { return _hdr_len; }
-	uint8_t version() { return _version; }
-	uint16_t len() { return ntohs(_len); }
-	uint8_t proto() { return _proto; }
-	uint16_t checksum() { return ntohs(_checksum); }
-	uint32_t src() { return _src; }	// little endian, for simple implementation
-	uint32_t dst() { return _dst; }	// little endian, same reason
+	uint8_t hdrLen() { return hdrLen_; }
+	uint8_t version() { return version_; }
+	uint16_t len() { return ntohs(len_); }
+	uint8_t proto() { return proto_ ; }
+	uint16_t checksum() { return ntohs(checksum_); }
+	uint32_t src() { return src_; }	// little endian, for simple implementation
+	uint32_t dst() { return dst_; }	// little endian, same reason
+	uint8_t *srcmask() { return srcmask_; }
+	uint8_t *dstmask() { return dstmask_; }
 
-	uint16_t ip_size() { return (uint16_t)hdr_len() * 4; }
+	uint16_t ipHdrSize() { return (uint16_t)hdrLen() * 4; }
 	static uint16_t calcIpChecksum(IpHdr*);
     
 	enum : uint16_t {

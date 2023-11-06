@@ -6,32 +6,32 @@
 #include "iphdr.h"
 
 
-#define TCP_SIZE 20
+#define MIN_TCP_SIZE 20
 
 
 #pragma pack(push, 1)
 struct TcpHdr {
-	uint16_t _srcport;
-	uint16_t _dstport;
-	uint32_t _seq_raw;
-	uint32_t _ack_raw;
-	uint8_t _flags_reserved:4,
-		_hdr_len:4;
-	uint8_t _flags;
-	uint16_t _window_size_value;
-	uint16_t _checksum;
-	uint16_t _urgent_pointer;
+	uint16_t srcport_;
+	uint16_t dstport_;
+	uint32_t seqRaw_;
+	uint32_t ackRaw_;
+	uint8_t flagsReserved_:4,
+		hdrLen_:4;
+	uint8_t flags_;
+	uint16_t windowSizeValue_;
+	uint16_t checksum_;
+	uint16_t urgentPointer_;
 
-	uint16_t srcport() { return ntohs(_srcport); }
-	uint16_t dstport() { return ntohs(_dstport); }
-	uint32_t seq_raw() { return ntohl(_seq_raw); }
-	uint32_t ack_raw() { return ntohl(_ack_raw); }
-	uint8_t hdr_len() { return _hdr_len; }
-	uint8_t flags() { return _flags; }
-	uint16_t checksum() { return ntohs(_checksum); }
+	uint16_t srcport() { return ntohs(srcport_); }
+	uint16_t dstport() { return ntohs(dstport_); }
+	uint32_t seqRaw() { return ntohl(seqRaw_); }
+	uint32_t ackRaw() { return ntohl(ackRaw_); }
+	uint8_t hdrLen() { return hdrLen_; }
+	uint8_t flags() { return flags_; }
+	uint16_t checksum() { return ntohs(checksum_); }
 
-	uint16_t tcp_size() { return (uint16_t)hdr_len() * 4; }
-	static uint16_t payload_len(IpHdr*, TcpHdr*);
+	uint16_t tcpHdrSize() { return (uint16_t)hdrLen() * 4; }
+	static uint16_t payloadLen(IpHdr*, TcpHdr*);
 	static uint16_t calcTcpChecksum(IpHdr*, TcpHdr*);
 	
     enum : uint16_t {
@@ -39,11 +39,11 @@ struct TcpHdr {
 		tls = 443
 	};
 	enum : uint8_t {
-		flags_ack = 0x10,
-		flags_psh = 0x8,
-		flags_rst = 0x4,
-		flags_syn = 0x2,
-		flags_fin = 0x1
+		flagsAck = 0x10,
+		flagsPsh = 0x8,
+		flagsRst = 0x4,
+		flagsSyn = 0x2,
+		flagsFin = 0x1
 	};
 };
 #pragma pack(pop)

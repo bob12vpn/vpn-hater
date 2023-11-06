@@ -5,8 +5,8 @@
 
 #include "packet.h"
 
-bool isTcp(RxPacket*);
-bool isTcp(RxOpenVpnTcpPacket*);
+bool isTcpAck(RxPacket*);
+bool isTcpAck(RxOpenVpnTcpPacket*);
 
 bool isOpenVpnTcp(RxOpenVpnTcpPacket*);
 

@@ -9,13 +9,13 @@
 
 #pragma pack(push, 1)
 struct LcpHdr {
-	uint8_t _code;
-    uint8_t _identifier;
-    uint16_t _length;
+	uint8_t code_;
+    uint8_t identifier_;
+    uint16_t length_;
 
-    uint8_t code() { return _code; }
-    uint8_t identifier() { return _identifier; }
-    uint16_t length() { return ntohs(_length); }
+    uint8_t code() { return code_; }
+    uint8_t identifier() { return identifier_; }
+    uint16_t length() { return ntohs(length_); }
 };
 #pragma pack(pop)
 

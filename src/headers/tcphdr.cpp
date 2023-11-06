@@ -1,7 +1,7 @@
 #include "tcphdr.h"
 
-uint16_t TcpHdr::payload_len(IpHdr *ip, TcpHdr *tcp) {
-    return ip->len() - ip->ip_size() - tcp->tcp_size();
+uint16_t TcpHdr::payloadLen(IpHdr *iphdr, TcpHdr *tcphdr) {
+    return iphdr->len() - iphdr->ip_size() - tcphdr->tcpHdrSize();
 }
 
 /**
@@ -9,16 +9,16 @@ uint16_t TcpHdr::payload_len(IpHdr *ip, TcpHdr *tcp) {
  * A. Because this function is only used in making TxPacket that has no payload.
  *    Same reason, padding is also ignored.
 */
-uint16_t TcpHdr::calcTcpChecksum(IpHdr *ip, TcpHdr *tcp) {
+uint16_t TcpHdr::calcTcpChecksum(IpHdr *iphdr, TcpHdr *tcphdr) {
     uint32_t ret = 0;
-    uint16_t *pword = reinterpret_cast<uint16_t*>(tcp);
-    tcp->_checksum = 0;
+    uint16_t *pword = reinterpret_cast<uint16_t*>(tcphdr);
+    tcphdr->_checksum = 0;
     
-    ret += (ntohs(ip->src() >> 16)) + (ntohs(ip->src() & 0xFFFF));
-    ret += (ntohs(ip->dst() >> 16)) + (ntohs(ip->dst() & 0xFFFF));
-    ret += ip->proto();
-    ret += tcp->tcp_size();
-    for(int i=0; i<tcp->tcp_size(); i+=2) {
+    ret += (ntohs(iphdr->src() >> 16)) + (ntohs(iphdr->src() & 0xFFFF));
+    ret += (ntohs(iphdr->dst() >> 16)) + (ntohs(iphdr->dst() & 0xFFFF));
+    ret += iphdr->proto();
+    ret += tcphdr->tcp_size();
+    for(int i=0; i<tcphdr->tcpHdrSize(); i+=2) {
         ret += ntohs(*(pword + i));
     }
     ret += ret >> 16;

@@ -9,13 +9,13 @@
 
 #pragma pack(push, 1)
 struct OpenVpnTcpHdr {
-	uint16_t _plen;
-	uint32_t _peerid:24,
-		 _type:8;
+	uint16_t plen_;
+	uint32_t peerid_:24,
+		 type_:8;
 
-	uint16_t plen() { return ntohs(_plen); }
-	uint8_t type() { return (uint8_t)_type; }
-	uint32_t peerid() { return ntohl(_type); }
+	uint16_t plen() { return ntohs(plen_); }
+	uint8_t type() { return (uint8_t)type_; }
+	uint32_t peerid() { return ntohl(peerid_); }
 };
 #pragma pack(pop)
 

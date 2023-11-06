@@ -12,64 +12,64 @@
 
 #pragma pack(push, 1)
 struct RxPacket {
-    struct EthHdr *eth{nullptr};
+    struct EthHdr *ethhdr{nullptr};
     
-    struct IpHdr *ip{nullptr};
+    struct IpHdr *iphdr{nullptr};
     
-    struct TcpHdr *tcp{nullptr};
-    struct UdpHdr *udp{nullptr};
+    struct TcpHdr *tcphdr{nullptr};
+    struct UdpHdr *udphdr{nullptr};
     
-    struct GreHdr *gre{nullptr};
+    struct GreHdr *grehdr{nullptr};
     
     RxPacket() {
-        eth = new EthHdr;
-        ip = new IpHdr;
-        tcp = new TcpHdr;
-        udp = new UdpHdr;
-        gre = new GreHdr;
+        ethhdr = new EthHdr;
+        iphdr = new IpHdr;
+        tcphdr = new TcpHdr;
+        udphdr = new UdpHdr;
+        grehdr = new GreHdr;
     }
     
     ~RxPacket() {
-        delete eth;
-        delete ip;
-        delete tcp;
-        delete udp;
-        delete gre;
+        delete ethhdr;
+        delete iphdr;
+        delete tcphdr;
+        delete udphdr;
+        delete grehdr;
     }
 };
 
 struct RxOpenVpnTcpPacket : RxPacket {
-    struct OpenVpnTcpHdr *openvpntcp{nullptr};
+    struct OpenVpnTcpHdr *openvpntcphdr{nullptr};
     
     RxOpenVpnTcpPacket() : RxPacket() {
-        openvpntcp = new OpenVpnTcpHdr;
+        openvpntcphdr = new OpenVpnTcpHdr;
     }
     
     ~RxOpenVpnTcpPacket() {
-        delete openvpntcp;
+        delete openvpntcphdr;
     }
 };
 
 struct RxPppPacket : RxPacket {
-    struct PppHdr *ppp{nullptr};
-    struct LcpHdr *lcp{nullptr};
+    struct PppHdr *ppphdr{nullptr};
+    struct LcpHdr *lcphdr{nullptr};
     
     RxPppPacket() : RxPacket() {
-        ppp = new PppHdr;
-        lcp = new LcpHdr;
+        ppphdr = new PppHdr;
+        lcphdr = new LcpHdr;
     }
     
     ~RxPppPacket() {
-        delete ppp;
-        delete lcp;
+        delete ppphdr;
+        delete lcphdr;
     }
 };
 
 struct TxPacket {
     // raw socket does not need ETH
     // struct EthHdr eth;
-    struct IpHdr ip;
-    struct TcpHdr tcp;
+    struct IpHdr iphdr;
+    struct TcpHdr tcphdr;
 };
 #pragma pack(pop)
 
