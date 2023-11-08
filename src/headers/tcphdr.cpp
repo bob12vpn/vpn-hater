@@ -23,3 +23,16 @@ uint16_t TcpHdr::calcTcpChecksum(IpHdr *iphdr, TcpHdr *tcphdr) {
     ret += ret >> 16;
     return ntohs(~(uint16_t)ret);
 }
+
+void TcpHdr::clear() {
+    this->srcport_ = 0;
+	this->dstport_ = 0;
+	this->seqRaw_ = 0;
+	this->ackRaw_ = 0;
+	this->flagsReserved_ = 0,
+    this->hdrLen_ = 0;
+	this->flags_ = 0;
+	this->windowSizeValue_ = 0;
+	this->checksum_ = 0;
+	this->urgentPointer_ = 0;
+}

@@ -1,12 +1,12 @@
 #include "grehdr.h"
 
 void GreHdr::clear() {
-    flagsAndVersion_ = 0;
-    proto_ = 0;
-    payloadLength_ = 0;
-    callId_ = 0;
-    sequenceNumber_ = 0;
-	ackNumber_ = 0;
+    this->flagsAndVersion_ = 0;
+    this->proto_ = 0;
+    this->payloadLength_ = 0;
+    this->callId_ = 0;
+    this->sequenceNumber_ = 0;
+	this->ackNumber_ = 0;
 }
 
 void GreHdr::setSeqAck() {

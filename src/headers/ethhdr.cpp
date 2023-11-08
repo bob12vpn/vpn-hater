@@ -2,8 +2,8 @@
 
 void EthHdr::clear() {
     for(int i=0; i<6; i++) {
-        dst_[i] = 0;
-        src_[i] = 0;
+        this->dst_[i] = 0;
+        this->src_[i] = 0;
     }
-    type_ = 0;
+    this->type_ = 0;
 }
