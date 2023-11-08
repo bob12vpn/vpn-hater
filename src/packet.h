@@ -29,14 +29,6 @@ struct RxPacket {
         grehdr = new GreHdr;
     }
     
-    ~RxPacket() {
-        delete ethhdr;
-        delete iphdr;
-        delete tcphdr;
-        delete udphdr;
-        delete grehdr;
-    }
-    
     virtual void parse(const uint8_t *pkt) {
         this->ethhdr = (struct EthHdr*)(pkt);
         this->iphdr = (struct IpHdr*)(pkt + ETH_SIZE);
@@ -49,10 +41,6 @@ struct RxOpenVpnTcpPacket : RxPacket {
     
     RxOpenVpnTcpPacket() : RxPacket() {
         openvpntcphdr = new OpenVpnTcpHdr;
-    }
-    
-    ~RxOpenVpnTcpPacket() {
-        delete openvpntcphdr;
     }
     
     void parse(const uint8_t *pkt) override {
@@ -70,11 +58,6 @@ struct RxPppPacket : RxPacket {
     RxPppPacket() : RxPacket() {
         ppphdr = new PppHdr;
         lcphdr = new LcpHdr;
-    }
-    
-    ~RxPppPacket() {
-        delete ppphdr;
-        delete lcphdr;
     }
     
     void parse(const uint8_t *pkt) override {
