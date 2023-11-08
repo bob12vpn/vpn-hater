@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 		pktCnt++;
 
 		// initialize
-		parsingPacket(rxPacket, packet);
+		rxPacket->parse(packet);
 
 		// filter
 		if(!isTcpAck(rxPacket)) continue;

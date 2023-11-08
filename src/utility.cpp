@@ -29,16 +29,3 @@ bool loadSni(char* sni_file_name, std::unordered_set<std::string> &ret) {
 	ret = std::unordered_set<std::string>(sni_vec.begin(), sni_vec.end());
 	return true;
 }
-
-void parsingPacket(RxPacket *dst, const uint8_t *src) {
-	dst->ethhdr = (struct EthHdr*)(src);
-	dst->iphdr = (struct IpHdr*)(src + ETH_SIZE);
-	dst->tcphdr = (struct TcpHdr*)(src + ETH_SIZE + dst->iphdr->ipHdrSize());
-}
-
-void parsingPacket(RxOpenVpnTcpPacket *dst, const uint8_t *src) {
-	dst->ethhdr = (struct EthHdr*)(src);
-	dst->iphdr = (struct IpHdr*)(src + ETH_SIZE);
-	dst->tcphdr = (struct TcpHdr*)(src + ETH_SIZE + dst->iphdr->ipHdrSize());
-	dst->openvpntcphdr = (struct OpenVpnTcpHdr*)(src + ETH_SIZE + dst->iphdr->ipHdrSize() + dst->tcphdr->tcpHdrSize());
-}
