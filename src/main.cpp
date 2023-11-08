@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
 		// copy packet
 		fwd->iphdr  = bwd->iphdr  = *(rxPacket->iphdr);
 		fwd->tcphdr = bwd->tcphdr = *(rxPacket->tcphdr);
-		fwd->tcphdr.hdrLen_ = 5;
+		fwd->tcphdr.hdrLen_ = bwd->tcphdr.hdrLen_ = 5;
 
 		// modify mac address
 		// deleted bacause raw socket doesn't need mac
