@@ -4,7 +4,7 @@
 #include "hpch.h"
 
 
-#define	PPP_SIZE	12
+#define	PPP_SIZE	4
 
 
 #pragma pack(push, 1)
