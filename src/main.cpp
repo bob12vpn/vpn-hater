@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
 		// deleted bacause raw socket doesn't need mac
 
 		// modify ip header
-		fwd->iphdr.len_ = bwd->iphdr.len_ = ntohs(rxPacket->iphdr->ipHdrSize() + rxPacket->tcphdr->tcpHdrSize());
+		fwd->iphdr.len_ = bwd->iphdr.len_ = ntohs(40);
 		std::swap(bwd->iphdr.src_, bwd->iphdr.dst_);
 		bwd->iphdr.ttl_ = 128;
 
