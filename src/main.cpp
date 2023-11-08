@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
 	while(true) {
 		int res = pcap_next_ex(mirrorPcap, &header, &packet);
 		if(res == 0) {
-			usleep(100);
+			usleep(1);
 			continue;
 		}
 
