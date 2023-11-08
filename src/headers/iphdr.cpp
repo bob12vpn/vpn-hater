@@ -19,7 +19,7 @@ void IpHdr::clear() {
 	this->len_ = 0;
 	this->id_ = 0;
 	this->flags_ = 0;
-	this->fragOffset_3 = 0;
+	this->fragOffset_ = 0;
 	this->ttl_ = 0;
 	this->proto_ = 0;
 	this->checksum_ = 0;
