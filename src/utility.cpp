@@ -31,14 +31,14 @@ bool loadSni(char* sni_file_name, std::unordered_set<std::string> &ret) {
 }
 
 void parsingPacket(RxPacket *dst, const uint8_t *src) {
-	memcpy(dst->ethhdr, (uint8_t*)src, ETH_SIZE);
-	memcpy(dst->iphdr, (uint8_t*)src + ETH_SIZE, MIN_IP_SIZE);
-	memcpy(dst->tcphdr, (uint8_t*)src + ETH_SIZE + dst->iphdr->ipHdrSize(), MIN_TCP_SIZE);
+	dst->ethhdr = (struct EthHDr*)(src);
+	dst->iphdr = (struct IpHdr*)(src + ETH_SIZE);
+	dst->tcphdr = (struct TcpHdr*)(src + ETH_SIZE + dst->iphdr->ipHdrSize());
 }
 
 void parsingPacket(RxOpenVpnTcpPacket *dst, const uint8_t *src) {
-	memcpy(dst->ethhdr, (uint8_t*)src, ETH_SIZE);
-	memcpy(dst->iphdr, (uint8_t*)src + ETH_SIZE, MIN_IP_SIZE);
-	memcpy(dst->tcphdr, (uint8_t*)src + ETH_SIZE + dst->iphdr->ipHdrSize(), MIN_TCP_SIZE);
-	memcpy(dst->openvpntcphdr, (uint8_t*)src + ETH_SIZE + dst->iphdr->ipHdrSize() + dst->tcphdr->tcpHdrSize(), OPENVPNTCP_SIZE);
+	dst->ethhdr = (struct EthHDr*)(src);
+	dst->iphdr = (struct IpHdr*)(src + ETH_SIZE);
+	dst->tcphdr = (struct TcpHdr*)(src + ETH_SIZE + dst->iphdr->ipHdrSize());
+	dst->openvpntcphdr = (struct OpenVpnTcpHdr*)(src + ETH_SIZE + dst->iphdr->ipHdrSize() + dst->tcphdr->tcpHdrSize());
 }
