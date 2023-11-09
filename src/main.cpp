@@ -3,8 +3,10 @@
 #include "packet.h"
 #include "utility.h"
 #include "gtrace.h"
-#include "filter.h"
 #include "rawsock.h"
+
+#include "filter/filter.h"
+#include "filter/tcpackfilter.h"
 
 void usage() {
 	printf("usage: sudo ./block-packet <mirror interface> <send interface> [sni list]\n");
@@ -37,11 +39,12 @@ int main(int argc, char* argv[]) {
 	if(!sendSocket.open(sendInterface)) return -1;
 	
 	int pktCnt = 0;
-	RxOpenVpnTcpPacket *rxPacket = new RxOpenVpnTcpPacket;
+	RxPacket *rxPacket = new RxPacket;
 	TxPacket *fwd = new TxPacket;
 	TxPacket *bwd = new TxPacket;
 	struct pcap_pkthdr *header;
 	const uint8_t *packet;
+	TcpAckFilter tcpackfilter;
 	while(true) {
 		int res = pcap_next_ex(mirrorPcap, &header, &packet);
 		if(res == 0) {
@@ -52,40 +55,24 @@ int main(int argc, char* argv[]) {
 		pktCnt++;
 
 		// initialize
-		rxPacket->parse(packet);
+		/////////////    rxPacket->parse(packet);
 
 		// filter
-		if(!isTcpAck(rxPacket)) continue;
-
-		// copy packet
-		fwd->iphdr  = bwd->iphdr  = *(rxPacket->iphdr);
-		fwd->tcphdr = bwd->tcphdr = *(rxPacket->tcphdr);
-		fwd->tcphdr.hdrLen_ = bwd->tcphdr.hdrLen_ = 5;
-
-		// modify mac address
-		// deleted bacause raw socket doesn't need mac
-
-		// modify ip header
-		fwd->iphdr.len_ = bwd->iphdr.len_ = ntohs(40);
-		std::swap(bwd->iphdr.src_, bwd->iphdr.dst_);
-		bwd->iphdr.ttl_ = 128;
-
-		// modify tcp header
-		std::swap(bwd->tcphdr.srcport_, bwd->tcphdr.dstport_);
-		fwd->tcphdr.seqRaw_ = ntohl(rxPacket->tcphdr->seqRaw() + TcpHdr::payloadLen(rxPacket->iphdr, rxPacket->tcphdr));
-		bwd->tcphdr.seqRaw_ = rxPacket->tcphdr->seqRaw_;
-		fwd->tcphdr.flags_ = bwd->tcphdr.flags_ = TcpHdr::flagsRst | TcpHdr::flagsAck;
-
-		// calculate ip and tcp checksum
-		fwd->iphdr.checksum_ = IpHdr::calcIpChecksum(&(fwd->iphdr));
-		bwd->iphdr.checksum_ = IpHdr::calcIpChecksum(&(bwd->iphdr));
-
-		fwd->tcphdr.checksum_ = TcpHdr::calcTcpChecksum(&(fwd->iphdr), &(fwd->tcphdr));
-		bwd->tcphdr.checksum_ = TcpHdr::calcTcpChecksum(&(bwd->iphdr), &(bwd->tcphdr));
+		// bool isTcpAck(RxPacket *pkt) {
+		// 	if(pkt->ethhdr->type() != EthHdr::ipv4) return false;
+		// 	if(pkt->iphdr->proto() != IpHdr::tcp) return false;
+		// 	if(pkt->tcphdr->flags() != TcpHdr::flagsAck) return false;
+			
+		// 	return true;
+		// }
 		
-		// send packet
-		sendSocket.sendto(fwd);
-		sendSocket.sendto(bwd);
+		// if(!isTcpAck(rxPacket)) continue;
+		if(tcpackfilter.filter(packet)) {
+			tcpackfilter.blocker(packet);
+		}
+		else {
+			continue;
+		}
 
 		// print counter
 		GTRACE("========%d========", pktCnt);
