@@ -67,8 +67,8 @@ int main(int argc, char* argv[]) {
 		// }
 		
 		// if(!isTcpAck(rxPacket)) continue;
-		if(tcpackfilter.filter(packet)) {
-			tcpackfilter.blocker(packet);
+		if(tcpackfilter.parseAndFilter(packet)) {
+			tcpackfilter.blocker(sendSocket);
 		}
 		else {
 			continue;
