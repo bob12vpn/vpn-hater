@@ -4,6 +4,7 @@
 #include "../pch.h"
 
 #include "../packet.h"
+#include "../rawsock.h"
 
 class Filter {
 public:

@@ -1,6 +1,6 @@
 #include "tcpackfilter.h"
 
-bool TcpAckFilter::parseAndFilter(const uint8_t *packet) override {
+bool TcpAckFilter::parseAndFilter(const uint8_t *packet) {
     this->rxPacket->parse(packet);
     if(this->rxPacket->ethhdr->type() != EthHdr::ipv4) return false;
 	if(this->rxPacket->iphdr->proto() != IpHdr::tcp) return false;
@@ -9,7 +9,7 @@ bool TcpAckFilter::parseAndFilter(const uint8_t *packet) override {
     return true;
 }
 
-void TcpAckFilter::blocker(RawSock sendSocket) override {
+void TcpAckFilter::blocker(RawSock sendSocket) {
     // copy packet
     fwd->iphdr  = bwd->iphdr  = *(rxPacket->iphdr);
     fwd->tcphdr = bwd->tcphdr = *(rxPacket->tcphdr);
