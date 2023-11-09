@@ -1,7 +1,8 @@
 TARGET=block-packet
 SRCDIR=./src
 HDRDIR=./src/headers
-SRCS=$(wildcard $(HDRDIR)/*.cpp) $(wildcard $(SRCDIR)/*.cpp)
+FILDIR=./src/filters
+SRCS=$(wildcard $(HDRDIR)/*.cpp) $(wildcard $(SRCDIR)/*.cpp) $(wildcard $(FILDIR)/*.cpp)
 OBJS=$(SRCS:%.cpp=%.o)
 
 CPPFLAGS=-Wall -Wextra -O2 -g

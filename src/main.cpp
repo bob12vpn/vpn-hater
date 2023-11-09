@@ -5,8 +5,8 @@
 #include "gtrace.h"
 #include "rawsock.h"
 
-#include "filter/filter.h"
-#include "filter/tcpackfilter.h"
+#include "filters/filter.h"
+#include "filters/tcpackfilter.h"
 
 void usage() {
 	printf("usage: sudo ./block-packet <mirror interface> <send interface> [sni list]\n");
