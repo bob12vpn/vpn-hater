@@ -16,8 +16,6 @@ struct OpenVpnTcpHdr {
 	uint16_t plen() { return ntohs(plen_); }
 	uint8_t type() { return (uint8_t)type_; }
 	uint32_t peerid() { return ntohl(peerid_); }
-	
-	void clear();
 };
 #pragma pack(pop)
 

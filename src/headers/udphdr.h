@@ -18,8 +18,6 @@ struct UdpHdr {
 	uint16_t length() { return ntohs(length_); }
 	uint16_t checksum() { return ntohs(checksum_); }
 	
-	void clear();
-	
 	enum : uint16_t {
 		dns = 53,
 		tls = 443

@@ -17,8 +17,6 @@ struct PppHdr {
     uint8_t control() { return control_; }
     uint16_t protocol() { return ntohs(protocol_); }
     
-    void clear();
-    
 	enum : uint16_t {
 		lcp = 0xc021
 	};

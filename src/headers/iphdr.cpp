@@ -11,18 +11,3 @@ uint16_t IpHdr::calcIpChecksum(IpHdr *iphdr) {
     ret += ret >> 16;
     return ntohs(~(uint16_t)ret);
 }
-
-void IpHdr::clear() {
-    this->hdrLen_ = 0;
-	this->version_ = 0;
-	this->dsfield_ = 0;
-	this->len_ = 0;
-	this->id_ = 0;
-	this->flags_ = 0;
-	this->fragOffset_ = 0;
-	this->ttl_ = 0;
-	this->proto_ = 0;
-	this->checksum_ = 0;
-	this->src_ = 0;
-	this->dst_ = 0;
-}

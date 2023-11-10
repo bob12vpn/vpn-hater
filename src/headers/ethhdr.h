@@ -16,8 +16,6 @@ struct EthHdr {
 	uint8_t *dst() { return dst_; }
 	uint8_t *src() { return src_; }
 	uint16_t type() { return ntohs(type_); }
-    
-	void clear();
 	
 	enum : uint16_t {
 		ipv4 = 0x0800

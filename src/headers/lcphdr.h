@@ -16,8 +16,6 @@ struct LcpHdr {
     uint8_t code() { return code_; }
     uint8_t identifier() { return identifier_; }
     uint16_t length() { return ntohs(length_); }
-    
-    void clear();
 };
 #pragma pack(pop)
 

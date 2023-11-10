@@ -40,7 +40,6 @@ struct IpHdr {
 
 	uint16_t ipHdrSize() { return (uint16_t)hdrLen() * 4; }
 	static uint16_t calcIpChecksum(IpHdr*);
-	void clear();
     
 	enum : uint16_t {
 		tcp = 6,

@@ -23,7 +23,6 @@ struct GreHdr {
     uint32_t sequenceNumber() { return ntohl(sequenceNumber_); }
 	uint32_t ackNumber() { return ntohl(ackNumber_); }
     
-	void clear();
 	void setSeqAck();
 	
 	enum : uint16_t {
