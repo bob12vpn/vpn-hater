@@ -7,6 +7,7 @@
 #include <string>
 #include <utility>
 #include <unordered_set>
+#include <list>
 
 #include <stdio.h>
 #include <stdlib.h>
