@@ -23,7 +23,6 @@ bool RawSock::open(char* interface) {
         }
     }
     
-    struct sockaddr_in addr_in_;
     memset(&addr_in_, 0, sizeof(addr_in_));
     addr_in_.sin_family = AF_INET;
     
