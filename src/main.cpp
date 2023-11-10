@@ -6,6 +6,8 @@
 #include "rawsock.h"
 
 #include "filters/filter.h"
+#include "filters/openvpntcpfilter.h"
+#include "filters/snifilter.h"
 #include "filters/tcpackfilter.h"
 
 void usage() {
@@ -34,17 +36,25 @@ int main(int argc, char* argv[]) {
 
 	pcap_t *mirrorPcap = openPcap(mirrorInterface);
 	if(mirrorPcap == NULL) return -1;
-
-	RawSock sendSocket;
-	if(!sendSocket.open(sendInterface)) return -1;
+	
+	OpenVpnTcpFilter openVpnFilter;
+	SniFilter sniFilter;
+	TcpAckFilter tcpAckFilter;
+	
+	std::list<Filter*> filters;
+	filters->push_back(&openVpnFilter);
+	filters->push_back(&sniFilter);
+	filters->push_back(&tcpAckFilter);
+	for(Filter *filter : filters) {
+		if(!filter->openRawSocket(sendInterface)) {
+			return -1;
+		}
+	}
 	
 	int pktCnt = 0;
 	RxPacket *rxPacket = new RxPacket;
-	TxPacket *fwd = new TxPacket;
-	TxPacket *bwd = new TxPacket;
 	struct pcap_pkthdr *header;
 	const uint8_t *packet;
-	TcpAckFilter tcpackfilter;
 	while(true) {
 		int res = pcap_next_ex(mirrorPcap, &header, &packet);
 		if(res == 0) {
@@ -53,36 +63,21 @@ int main(int argc, char* argv[]) {
 		}
 
 		pktCnt++;
-
-		// initialize
-		/////////////    rxPacket->parse(packet);
-
-		// filter
-		// bool isTcpAck(RxPacket *pkt) {
-		// 	if(pkt->ethhdr->type() != EthHdr::ipv4) return false;
-		// 	if(pkt->iphdr->proto() != IpHdr::tcp) return false;
-		// 	if(pkt->tcphdr->flags() != TcpHdr::flagsAck) return false;
-			
-		// 	return true;
-		// }
 		
-		// if(!isTcpAck(rxPacket)) continue;
-		if(tcpackfilter.parseAndFilter(packet)) {
-			tcpackfilter.blocker(sendSocket);
+		rxPacket->clear();
+		rxPacket->parse(packet);
+		
+		for(Filter *filter : filters) {
+			if(filter->filter(rxPacket)) {
+				break;
+			}
 		}
-		else {
-			continue;
-		}
-
-		// print counter
+		
 		GTRACE("========%d========", pktCnt);
 	}
 
 	delete rxPacket;
-	delete fwd;
-	delete bwd;
 	pcap_close(mirrorPcap);
-	sendSocket.close();
 	
 	return 0;
 }
