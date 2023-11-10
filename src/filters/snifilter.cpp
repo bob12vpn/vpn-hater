@@ -1,6 +1,6 @@
 #include "snifilter.h"
 
-bool TcpAckFilter::openRawSocket(char *interface) {
+bool SniFilter::openRawSocket(char *interface) {
     return sendSocket.open(interface);
 }
 
