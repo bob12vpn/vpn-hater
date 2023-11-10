@@ -16,7 +16,7 @@ bool RawSock::open(char* interface) {
         return false;
     }
     
-    if(strlen(interface) != 0) {
+    if(interface != nullptr && strlen(interface) != 0) {
         if(::setsockopt(socket, SOL_SOCKET, SO_BINDTODEVICE, interface, strlen(interface))) {
             GTRACE("setsockopt(SO_BINDTODEVICE) Failed");
             return false;
