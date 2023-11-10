@@ -8,8 +8,7 @@
 
 class Filter {
 public:
-    virtual bool parseAndFilter(const uint8_t*) = 0;
-    virtual void blocker(RawSock) = 0;
+    virtual bool filter(RxPacket*) = 0;
 };
 
 #endif // FILTER_H_
