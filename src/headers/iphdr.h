@@ -4,9 +4,6 @@
 #include "hpch.h"
 
 
-#define MIN_IP_SIZE 20
-
-
 #pragma pack(push, 1)
 struct IpHdr {
 	uint8_t hdrLen_:4,
