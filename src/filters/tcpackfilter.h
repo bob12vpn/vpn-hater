@@ -5,21 +5,18 @@
 
 #include "filter.h"
 #include "../packet.h"
+#include "../rawsock.h"
 
 class TcpAckFilter : public Filter {
-    RxPacket *rxPacket;
-    TxPacket *fwd;
-	TxPacket *bwd;
+    RxPacket *rxPacket{nullptr};
+    TxPacket *fwd{nullptr};
+    TxPacket *bwd{nullptr};
+    
+    RawSock sendSocket;
     
 public:
-    TcpAckFilter() {
-        rxPacket = new RxPacket;
-        fwd = new TxPacket;
-	    bwd = new TxPacket;
-    }
-
-    bool parseAndFilter(const uint8_t*) override;
-    void blocker(RawSock) override;
+    void openRawSocket(char*) override;
+    bool filter(RxPacket*) override;
 };
 
 #endif // TCPACKFILTER_H_

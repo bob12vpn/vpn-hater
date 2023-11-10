@@ -1,15 +1,14 @@
 #include "tcpackfilter.h"
 
-bool TcpAckFilter::parseAndFilter(const uint8_t *packet) {
-    this->rxPacket->parse(packet);
-    if(this->rxPacket->ethhdr->type() != EthHdr::ipv4) return false;
-	if(this->rxPacket->iphdr->proto() != IpHdr::tcp) return false;
-	if(this->rxPacket->tcphdr->flags() != TcpHdr::flagsAck) return false;
-    
-    return true;
+bool TcpAckFilter::openRawSocket(char *interface) {
+    return sendSocket.open(interface);
 }
 
-void TcpAckFilter::blocker(RawSock sendSocket) {
+bool TcpAckFilter::filter(RxPacket *rxPacket) {
+    if(rxPacket->ethhdr->type() != EthHdr::ipv4) return false;
+	if(rxPacket->iphdr->proto() != IpHdr::tcp) return false;
+	if(rxPacket->tcphdr->flags() != TcpHdr::flagsAck) return false;
+    
     // copy packet
     fwd->iphdr  = bwd->iphdr  = *(rxPacket->iphdr);
     fwd->tcphdr = bwd->tcphdr = *(rxPacket->tcphdr);
@@ -17,6 +16,7 @@ void TcpAckFilter::blocker(RawSock sendSocket) {
 
     // modify ip header
     fwd->iphdr.len_ = bwd->iphdr.len_ = ntohs(40);
+    fwd->iphdr.id_ = bwd->iphdr.id_ = 0x4444;
     std::swap(bwd->iphdr.src_, bwd->iphdr.dst_);
     bwd->iphdr.ttl_ = 128;
 
@@ -36,4 +36,6 @@ void TcpAckFilter::blocker(RawSock sendSocket) {
     // send packet
     sendSocket.sendto(fwd);
     sendSocket.sendto(bwd);
+    
+    return true;
 }
