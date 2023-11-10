@@ -43,7 +43,7 @@ void TlsHdr::parse(const uint8_t *pkt) {
         len_ = (uint16_t)(pkt[offset] << 8 | pkt[offset + 1]);
         offset += 2;
         
-        if(extensionType_ == TlsHdr::serverName) {
+        if(extensionType_ == TlsHdr::typeServerName) {
             offset += 3;
             
             serverNameLen_ = (uint16_t)(pkt[offset] << 8 | pkt[offset + 1]);

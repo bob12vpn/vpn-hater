@@ -50,7 +50,7 @@ struct TlsHdr {
 	enum : uint8_t {
         handshake = 22,
 		clientHello = 1,
-		serverName = 0
+		typeServerName = 0
 	};
 };
 #pragma pack(pop)
