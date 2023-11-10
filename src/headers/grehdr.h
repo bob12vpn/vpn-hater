@@ -4,9 +4,6 @@
 #include "hpch.h"
 
 
-#define	MIN_GRE_SIZE	12
-
-
 #pragma pack(push, 1)
 struct GreHdr {
 	uint16_t flagsAndVersion_;
@@ -23,6 +20,7 @@ struct GreHdr {
     uint32_t sequenceNumber() { return ntohl(sequenceNumber_); }
 	uint32_t ackNumber() { return ntohl(ackNumber_); }
     
+	uint8_t greHdrSize();
 	void setSeqAck();
 	
 	enum : uint16_t {
