@@ -37,13 +37,13 @@ int main(int argc, char* argv[]) {
 	pcap_t *mirrorPcap = openPcap(mirrorInterface);
 	if(mirrorPcap == NULL) return -1;
 	
-	OpenVpnTcpFilter openVpnFilter;
-	SniFilter sniFilter;
+	// OpenVpnTcpFilter openVpnTcpFilter;
+	// SniFilter sniFilter;
 	TcpAckFilter tcpAckFilter;
 	
 	std::list<Filter*> filters;
-	filters->push_back(&openVpnFilter);
-	filters->push_back(&sniFilter);
+	// filters->push_back(&openVpnTcpFilter);
+	// filters->push_back(&sniFilter);
 	filters->push_back(&tcpAckFilter);
 	for(Filter *filter : filters) {
 		if(!filter->openRawSocket(sendInterface)) {
