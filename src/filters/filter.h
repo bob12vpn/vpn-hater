@@ -7,7 +7,7 @@
 
 class Filter {
 public:
-    virtual void openRawSocket(char*) = 0;
+    virtual bool openRawSocket(char*) = 0;
     virtual bool filter(RxPacket*) = 0;
 };
 
