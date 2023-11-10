@@ -11,7 +11,7 @@ void RxPacket::parse(const uint8_t *pkt) {
             if(tcphdr->dstport() == TcpHdr::tls) {
                 tlshdr->parse(pkt + ETH_SIZE + iphdr->ipHdrSize() + tcphdr->tcpHdrSize());
             }
-            openvpntcphdr = (struct OpenVpnTcpHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize() + tcphdr->tcpHdrSize());
+            // openvpntcphdr = (struct OpenVpnTcpHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize() + tcphdr->tcpHdrSize());
             break;
         case IpHdr::udp:
             udphdr = (struct UdpHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize());
