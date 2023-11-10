@@ -21,14 +21,6 @@ struct RxPacket {
     
     struct GreHdr *grehdr{nullptr};
     
-    RxPacket() {
-        ethhdr = new EthHdr;
-        iphdr = new IpHdr;
-        tcphdr = new TcpHdr;
-        udphdr = new UdpHdr;
-        grehdr = new GreHdr;
-    }
-    
     void clear() {
         ethhdr = nullptr;
         iphdr = nullptr;
