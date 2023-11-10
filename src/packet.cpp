@@ -21,7 +21,7 @@ void RxPacket::parse(const uint8_t *pkt) {
             if(grehdr->proto() == GreHdr::ppp) {
                 ppphdr = (struct PppHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize() + grehdr->greHdrSize());
                 if(ppphdr->protocol() == PppHdr::lcp) {
-                    lcphdr = (struct LcpHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize() + grehdr->greHdrSize() + PPP_SIZE());
+                    lcphdr = (struct LcpHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize() + grehdr->greHdrSize() + PPP_SIZE);
                 }
             }   // grehdr
             break;
