@@ -43,7 +43,8 @@ struct IpHdr {
     
 	enum : uint16_t {
 		tcp = 6,
-		udp = 17
+		udp = 17,
+		gre = 47
 	};
 };
 #pragma pack(pop)

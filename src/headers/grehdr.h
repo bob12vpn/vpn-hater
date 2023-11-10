@@ -26,6 +26,10 @@ struct GreHdr {
 	void setSeqAck();
 	
 	enum : uint16_t {
+		ack = 0x80,
+		seq = 0x1000
+	};
+	enum : uint16_t {
 		ppp = 0x880b
 	};
 };
