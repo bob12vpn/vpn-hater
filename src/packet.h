@@ -29,6 +29,14 @@ struct RxPacket {
         grehdr = new GreHdr;
     }
     
+    void clear() {
+        ethhdr = nullptr;
+        iphdr = nullptr;
+        tcphdr = nullptr;
+        udphdr = nullptr;
+        grehdr = nullptr;
+    }
+    
     virtual void parse(const uint8_t *pkt) {
         this->ethhdr = (struct EthHdr*)(pkt);
         this->iphdr = (struct IpHdr*)(pkt + ETH_SIZE);
