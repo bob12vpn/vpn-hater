@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 	std::list<Filter*> filters;
 	// filters->push_back(&openVpnTcpFilter);
 	// filters->push_back(&sniFilter);
-	filters->push_back(&tcpAckFilter);
+	filters.push_back(&tcpAckFilter);
 	for(Filter *filter : filters) {
 		if(!filter->openRawSocket(sendInterface)) {
 			return -1;
