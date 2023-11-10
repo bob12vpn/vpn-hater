@@ -10,6 +10,9 @@ bool SniFilter::filter(RxPacket *rxPacket) {
 	if(rxPacket->tcphdr->flags() != (TcpHdr::flagsPsh | TcpHdr::flagsAck)) return false;
     if(rxPacket->tcphdr->dstport() != TcpHdr::tls) return false;
     
+    // @todo
+    // need to search in sni list
+    
     // copy packet
     fwd->iphdr  = bwd->iphdr  = *(rxPacket->iphdr);
     fwd->tcphdr = bwd->tcphdr = *(rxPacket->tcphdr);
