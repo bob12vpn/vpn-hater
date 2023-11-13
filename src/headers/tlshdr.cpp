@@ -1,12 +1,5 @@
 #include "tlshdr.h"
 
-uint16_t read16b(const uint8_t *c) {
-	return (uint16_t)(c[0] << 8 | c[1]);
-}
-uint32_t read24b(const uint8_t *c) {
-	return (uint32_t)(c[1] << 16 | c[2] << 8 | c[3]);
-}
-
 void TlsHdr::parse(const uint8_t *pkt) {
     int offset = 0;
     
