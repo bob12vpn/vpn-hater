@@ -5,10 +5,10 @@ bool SniFilter::openRawSocket(char *interface) {
 }
 
 bool SniFilter::filter(RxPacket *rxPacket) {
-    if(rxPacket->ethhdr->type() != EthHdr::ipv4) return false;
-	if(rxPacket->iphdr->proto() != IpHdr::tcp) return false;
-	if(rxPacket->tcphdr->flags() != (TcpHdr::flagsPsh | TcpHdr::flagsAck)) return false;
-    if(rxPacket->tcphdr->dstport() != TcpHdr::tls) return false;
+    if(rxPacket->ethhdr != nullptr && rxPacket->ethhdr->type() != EthHdr::ipv4) return false;
+	if(rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::tcp) return false;
+	if(rxPacket->tcphdr != nullptr && rxPacket->tcphdr->flags() != (TcpHdr::flagsPsh | TcpHdr::flagsAck)) return false;
+    if(rxPacket->tlsdr != nullptr && rxPacket->tcphdr->dstport() != TcpHdr::tls) return false;
     
     // @todo
     // need to search in sni list

@@ -8,10 +8,11 @@ void RxPacket::parse(const uint8_t *pkt) {
         switch(iphdr->proto()) {
         case IpHdr::tcp:
             tcphdr = (struct TcpHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize());
-            if(tcphdr->dstport() == TcpHdr::tls && tcphdr->payloadLen(iphdr, tcphdr) != 0) {
+            if(tcphdr->payloadLen(iphdr, tcphdr) == 0) break;
+            if(tcphdr->dstport() == TcpHdr::tls) {
                 tlshdr->parse(pkt + ETH_SIZE + iphdr->ipHdrSize() + tcphdr->tcpHdrSize());
             }
-            // openvpntcphdr = (struct OpenVpnTcpHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize() + tcphdr->tcpHdrSize());
+            openvpntcphdr = (struct OpenVpnTcpHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize() + tcphdr->tcpHdrSize());
             break;
         case IpHdr::udp:
             udphdr = (struct UdpHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize());
