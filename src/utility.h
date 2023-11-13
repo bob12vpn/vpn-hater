@@ -3,7 +3,6 @@
 
 #include "pch.h"
 
-#include "packet.h"
 #include "gtrace.h"
 
 pcap_t* openPcap(char*);
