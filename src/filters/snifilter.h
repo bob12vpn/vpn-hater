@@ -16,6 +16,11 @@ class SniFilter : public Filter {
     RawSock sendSocket;
 
 public:
+    SniFilter() {
+        fwd = new TxPacket;
+        bwd = new TxPacket;
+    }
+    
     std::unordered_set<std::string> sniSet;
     
     bool openRawSocket(char*) override;

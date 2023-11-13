@@ -15,6 +15,11 @@ class OpenVpnTcpFilter : public Filter {
     RawSock sendSocket;
     
 public:
+    OpenVpnTcpFilter() {
+        fwd = new TxPacket;
+        bwd = new TxPacket;
+    }
+    
     bool openRawSocket(char*) override;
     bool filter(RxPacket*) override;
 };
