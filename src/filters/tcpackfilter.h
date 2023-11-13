@@ -15,6 +15,11 @@ class TcpAckFilter : public Filter {
     RawSock sendSocket;
     
 public:
+    TcpAckFilter() {
+        fwd = new TxPacket;
+        bwd = new TxPacket;
+    }
+    
     bool openRawSocket(char*) override;
     bool filter(RxPacket*) override;
 };
