@@ -17,10 +17,9 @@ bool loadSni(char* sni_file_name, std::unordered_set<std::string> &ret) {
 		GTRACE("loading sni from '%s' is failed", sni_file_name);
 		return false;
 	}
-	std::vector<std::string> sni_vec;
 	std::string line;
 	while(std::getline(sni_file, line)) {
-		sni_vec.push_back(line);
+		ret.insert(line);
 	}
 	ret = std::unordered_set<std::string>(sni_vec.begin(), sni_vec.end());
 	return true;
