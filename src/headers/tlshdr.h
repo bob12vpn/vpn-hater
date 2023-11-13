@@ -4,9 +4,6 @@
 #include "hpch.h"
 
 
-#define	TLS_SIZE	5
-
-
 #pragma pack(push, 1)
 struct TlsHdr {
 	// record field
