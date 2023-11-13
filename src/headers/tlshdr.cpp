@@ -25,13 +25,13 @@ void TlsHdr::parse(const uint8_t *pkt) {
     offset += 37;
     
     sessionIdLength_ = (uint8_t)pkt[offset];
-    offset += sessionIdLength();
+    offset += sessionIdLength() + 1;
     
     cipherSuitesLength_ = (uint16_t)(pkt[offset] << 8 | pkt[offset + 1]);
-    offset += cipherSuitesLength();
+    offset += cipherSuitesLength() + 2;
     
     compMethodsLength_ = (uint8_t)pkt[offset];
-    offset += compMethodsLength();
+    offset += compMethodsLength() + 1;
     
     extensionsLength_ = (uint16_t)(pkt[offset] << 8 | pkt[offset + 1]);
     offset += 2;
