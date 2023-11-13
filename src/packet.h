@@ -31,6 +31,10 @@ struct RxPacket {
     
     struct LcpHdr *lcphdr{nullptr};
     
+    RxPacket() {
+        tlshdr = new TlsHdr;
+    }
+    
     void clear() {
         ethhdr = nullptr;
         
@@ -42,7 +46,6 @@ struct RxPacket {
         ppphdr = nullptr;
         
         openvpntcphdr = nullptr;
-        tlshdr = nullptr;
         
         lcphdr = nullptr;
     }
