@@ -11,10 +11,6 @@ pcap_t* openPcap(char* interface) {
 	return pcap;
 }
 
-uint8_t hex2int(char n) {
-	return ('0' <= n && n <= '9') ? n - '0' : n - 'a' + 10;
-}
-
 bool loadSni(char* sni_file_name, std::unordered_set<std::string> &ret) {
 	std::ifstream sni_file(sni_file_name);
 	if(!sni_file) {
