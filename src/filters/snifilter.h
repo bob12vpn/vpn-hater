@@ -14,10 +14,10 @@ class SniFilter : public Filter {
     TxPacket *bwd{nullptr};
     
     RawSock sendSocket;
-    
+
+public:
     std::unordered_set<std::string> sniSet;
     
-public:
     bool openRawSocket(char*) override;
     bool filter(RxPacket*) override;
 };

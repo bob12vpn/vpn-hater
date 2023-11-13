@@ -8,7 +8,7 @@ bool SniFilter::filter(RxPacket *rxPacket) {
     if(rxPacket->ethhdr != nullptr && rxPacket->ethhdr->type() != EthHdr::ipv4) return false;
 	if(rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::tcp) return false;
 	if(rxPacket->tcphdr != nullptr && rxPacket->tcphdr->flags() != (TcpHdr::flagsPsh | TcpHdr::flagsAck)) return false;
-    if(rxPacket->tlsdr != nullptr && rxPacket->tcphdr->dstport() != TcpHdr::tls) return false;
+    if(rxPacket->tlshdr != nullptr && rxPacket->tcphdr->dstport() != TcpHdr::tls) return false;
     
     // filter with sni set
     if(sniSet.find(rxPacket->tlshdr->serverName()) == sniSet.end()) return false;
