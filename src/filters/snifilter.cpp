@@ -10,8 +10,8 @@ bool SniFilter::filter(RxPacket *rxPacket) {
 	if(rxPacket->tcphdr != nullptr && rxPacket->tcphdr->flags() != (TcpHdr::flagsPsh | TcpHdr::flagsAck)) return false;
     if(rxPacket->tlsdr != nullptr && rxPacket->tcphdr->dstport() != TcpHdr::tls) return false;
     
-    // @todo
-    // need to search in sni list
+    // filter with sni set
+    if(sniSet.find(rxPacket->tlshdr->serverName()) == sniSet.end()) return false;
     
     // copy packet
     fwd->iphdr  = bwd->iphdr  = *(rxPacket->iphdr);

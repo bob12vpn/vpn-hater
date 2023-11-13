@@ -26,25 +26,26 @@ int main(int argc, char* argv[]) {
 	}
 	char *mirrorInterface = argv[1];
 	char *sendInterface = argv[2];
-	std::unordered_set<std::string> sniList;
-	if(argc == 4) {
-		bool success = loadSni(argv[3], sniList);
-		if(!success) {
-			return -1;
-		}
-	}
 
 	pcap_t *mirrorPcap = openPcap(mirrorInterface);
 	if(mirrorPcap == NULL) return -1;
 	
-	// OpenVpnTcpFilter openVpnTcpFilter;
-	// SniFilter sniFilter;
-	TcpAckFilter tcpAckFilter;
+	OpenVpnTcpFilter openVpnTcpFilter;
+	SniFilter sniFilter;
+	// only for debug
+	// TcpAckFilter tcpAckFilter;
+	
+	if(argc == 4) {
+		bool success = loadSni(argv[3], sniFilter.sniSet);
+		if(!success) {
+			return -1;
+		}
+	}
 	
 	std::list<Filter*> filters;
-	// filters->push_back(&openVpnTcpFilter);
-	// filters->push_back(&sniFilter);
-	filters.push_back(&tcpAckFilter);
+	filters.push_back(&openVpnTcpFilter);
+	filters.push_back(&sniFilter);
+	// filters.push_back(&tcpAckFilter);
 	for(Filter *filter : filters) {
 		if(!filter->openRawSocket(sendInterface)) {
 			return -1;

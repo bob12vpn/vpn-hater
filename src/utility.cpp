@@ -21,6 +21,6 @@ bool loadSni(char* sni_file_name, std::unordered_set<std::string> &ret) {
 	while(std::getline(sni_file, line)) {
 		ret.insert(line);
 	}
-	ret = std::unordered_set<std::string>(sni_vec.begin(), sni_vec.end());
+	GTRACE("sni set is loaded");
 	return true;
 }

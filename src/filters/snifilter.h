@@ -6,6 +6,7 @@
 #include "filter.h"
 #include "../packet.h"
 #include "../rawsock.h"
+#include "../utility.h"
 
 class SniFilter : public Filter {
     RxPacket *rxPacket{nullptr};
@@ -13,6 +14,8 @@ class SniFilter : public Filter {
     TxPacket *bwd{nullptr};
     
     RawSock sendSocket;
+    
+    std::unordered_set<std::string> sniSet;
     
 public:
     bool openRawSocket(char*) override;
