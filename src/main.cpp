@@ -70,11 +70,10 @@ int main(int argc, char* argv[]) {
 		
 		for(Filter *filter : filters) {
 			if(filter->filter(rxPacket)) {
+				GTRACE("========%d========", pktCnt);
 				break;
 			}
 		}
-		
-		GTRACE("========%d========", pktCnt);
 	}
 
 	delete rxPacket;
