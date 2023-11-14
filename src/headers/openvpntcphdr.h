@@ -10,8 +10,8 @@
 #pragma pack(push, 1)
 struct OpenVpnTcpHdr {
 	uint16_t plen_;
-	uint32_t peerid_:24,
-		 type_:8;
+	uint32_t type_:8,
+		 peerid_:24;
 
 	uint16_t plen() { return ntohs(plen_); }
 	uint8_t type() { return (uint8_t)type_; }
