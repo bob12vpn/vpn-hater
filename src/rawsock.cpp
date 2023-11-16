@@ -45,6 +45,6 @@ bool RawSock::sendto(TxPacket *pkt) {
         GTRACE("[Fail] %s - %d", strerror(errno), errno);
         return false;
     }
-    GTRACE("packet is sended");
+    GTRACE("packet is sent");
     return true;
 }
