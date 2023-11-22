@@ -6,9 +6,8 @@
 #include "rawsock.h"
 
 #include "filters/filter.h"
-#include "filters/openvpntcpfilter.h"
-#include "filters/snifilter.h"
-#include "filters/tcpackfilter.h"
+#include "filters/filtermanager.h"
+
 
 void usage() {
 	printf("usage: sudo ./block-packet <mirror interface> <send interface> [sni list]\n");
@@ -30,24 +29,13 @@ int main(int argc, char* argv[]) {
 	pcap_t *mirrorPcap = openPcap(mirrorInterface);
 	if(mirrorPcap == NULL) return -1;
 	
-	OpenVpnTcpFilter openVpnTcpFilter;
-	SniFilter sniFilter;
-	// only for debug
-	// TcpAckFilter tcpAckFilter;
-	
-	if(argc == 4) {
-		bool success = loadSni(argv[3], sniFilter.sniSet);
-		if(!success) {
-			return -1;
-		}
+	FilterManager filterManager;
+	if(!filterManager.openRawSockets(sendInterface)) {
+		return -1;
 	}
 	
-	std::list<Filter*> filters;
-	filters.push_back(&openVpnTcpFilter);
-	filters.push_back(&sniFilter);
-	// filters.push_back(&tcpAckFilter);
-	for(Filter *filter : filters) {
-		if(!filter->openRawSocket(sendInterface)) {
+	if(argc == 4) {
+		if(!filterManager.sniFilter.loadSni(argv[3])) {
 			return -1;
 		}
 	}
@@ -68,11 +56,8 @@ int main(int argc, char* argv[]) {
 		rxPacket->clear();
 		rxPacket->parse(packet);
 		
-		for(Filter *filter : filters) {
-			if(filter->filter(rxPacket)) {
-				GTRACE("========%d========", pktCnt);
-				break;
-			}
+		if(filterManager.processAll(rxPacket)) {
+			GTRACE("========%d========", pktCnt);
 		}
 	}
 

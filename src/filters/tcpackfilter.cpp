@@ -1,10 +1,6 @@
 #include "tcpackfilter.h"
 
-bool TcpAckFilter::openRawSocket(char *interface) {
-    return sendSocket.open(interface);
-}
-
-bool TcpAckFilter::filter(RxPacket *rxPacket) {
+bool TcpAckFilter::process(RxPacket *rxPacket) {
     if(rxPacket->ethhdr != nullptr && rxPacket->ethhdr->type() != EthHdr::ipv4) return false;
 	if(rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::tcp) return false;
 	if(rxPacket->tcphdr != nullptr && rxPacket->tcphdr->flags() != TcpHdr::flagsAck) return false;

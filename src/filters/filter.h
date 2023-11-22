@@ -4,11 +4,14 @@
 #include "../pch.h"
 
 #include "../packet.h"
+#include "../rawsock.h"
 
 class Filter {
 public:
-    virtual bool openRawSocket(char*) = 0;
-    virtual bool filter(RxPacket*) = 0;
+    RawSock sendSocket;
+    
+    bool openRawSocket(char*);
+    virtual bool process(RxPacket*) = 0;
 };
 
 #endif // FILTER_H_

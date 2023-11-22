@@ -1,10 +1,6 @@
 #include "openvpntcpfilter.h"
 
-bool OpenVpnTcpFilter::openRawSocket(char *interface) {
-    return sendSocket.open(interface);
-}
-
-bool OpenVpnTcpFilter::filter(RxPacket *rxPacket) {
+bool OpenVpnTcpFilter::process(RxPacket *rxPacket) {
     if(rxPacket->ethhdr != nullptr && rxPacket->ethhdr->type() != EthHdr::ipv4) return false;
 	if(rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::tcp) return false;
 	if(rxPacket->tcphdr != nullptr && rxPacket->tcphdr->flags() != (TcpHdr::flagsPsh | TcpHdr::flagsAck)) return false;

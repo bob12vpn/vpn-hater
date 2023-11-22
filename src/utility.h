@@ -7,6 +7,4 @@
 
 pcap_t* openPcap(char*);
 
-bool loadSni(char*, std::unordered_set<std::string>&);
-
 #endif // UTILITY_H_

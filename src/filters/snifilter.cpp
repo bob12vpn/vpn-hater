@@ -1,10 +1,20 @@
 #include "snifilter.h"
 
-bool SniFilter::openRawSocket(char *interface) {
-    return sendSocket.open(interface);
+bool SniFilter::loadSni(char *sni_file_name) {
+	std::ifstream sni_file(sni_file_name);
+	if(!sni_file) {
+		GTRACE("loading sni from '%s' is failed", sni_file_name);
+		return false;
+	}
+	std::string line;
+	while(std::getline(sni_file, line)) {
+		sniSet.insert(line);
+	}
+	GTRACE("sni set is loaded");
+	return true;
 }
 
-bool SniFilter::filter(RxPacket *rxPacket) {
+bool SniFilter::process(RxPacket *rxPacket) {
     if(rxPacket->ethhdr != nullptr && rxPacket->ethhdr->type() != EthHdr::ipv4) return false;
 	if(rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::tcp) return false;
 	if(rxPacket->tcphdr != nullptr && rxPacket->tcphdr->flags() != (TcpHdr::flagsPsh | TcpHdr::flagsAck)) return false;
