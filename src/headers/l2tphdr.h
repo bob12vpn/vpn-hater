@@ -3,13 +3,11 @@
 
 #include "hpch.h"
 
-
-#define	L2TP_SIZE	6
-
+#define L2TP_SIZE 6
 
 #pragma pack(push, 1)
 struct L2tpHdr {
-	uint16_t flags_;
+    uint16_t flags_;
     uint16_t tunnel_;
     uint16_t session_;
 

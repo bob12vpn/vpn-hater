@@ -9,9 +9,9 @@
 class Filter {
 public:
     RawSock sendSocket;
-    
-    bool openRawSocket(char*);
-    virtual bool process(RxPacket*) = 0;
+
+    bool openRawSocket(char *);
+    virtual bool process(RxPacket *) = 0;
 };
 
 #endif // FILTER_H_

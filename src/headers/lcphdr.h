@@ -3,13 +3,11 @@
 
 #include "hpch.h"
 
-
-#define	LCP_SIZE	4
-
+#define LCP_SIZE 4
 
 #pragma pack(push, 1)
 struct LcpHdr {
-	uint8_t code_;
+    uint8_t code_;
     uint8_t identifier_;
     uint16_t length_;
 

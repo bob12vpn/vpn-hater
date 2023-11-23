@@ -1,12 +1,11 @@
 #ifndef PCH_H_
 #define PCH_H_
 
-
 #include <fstream>
-#include <string>
-#include <utility>
-#include <unordered_set>
 #include <list>
+#include <string>
+#include <unordered_set>
+#include <utility>
 
 #include <stdio.h>
 #include <stdlib.h>

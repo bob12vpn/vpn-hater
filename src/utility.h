@@ -5,6 +5,6 @@
 
 #include "gtrace.h"
 
-pcap_t* openPcap(char*);
+pcap_t *openPcap(char *);
 
 #endif // UTILITY_H_

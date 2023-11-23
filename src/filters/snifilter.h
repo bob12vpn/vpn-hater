@@ -3,8 +3,8 @@
 
 #include "../pch.h"
 
-#include "filter.h"
 #include "../packet.h"
+#include "filter.h"
 
 class SniFilter : public Filter {
     RxPacket *rxPacket{nullptr};
@@ -16,11 +16,11 @@ public:
         fwd = new TxPacket;
         bwd = new TxPacket;
     }
-    
+
     std::unordered_set<std::string> sniSet;
-    
-    bool process(RxPacket*) override;
-    bool loadSni(char*);
+
+    bool process(RxPacket *) override;
+    bool loadSni(char *);
 };
 
 #endif // SNIFILTER_H_

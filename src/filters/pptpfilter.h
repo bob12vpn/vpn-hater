@@ -3,20 +3,19 @@
 
 #include "../pch.h"
 
-#include "filter.h"
 #include "../packet.h"
-
+#include "filter.h"
 
 class PptpFilter : public Filter {
     RxPacket *rxPacket{nullptr};
     TxPptpPacket *fwd{nullptr};
-    
+
 public:
     PptpFilter() {
         fwd = new TxPptpPacket;
     }
-    
-    bool process(RxPacket*) override;
+
+    bool process(RxPacket *) override;
 };
 
 #endif // PPTPFILTER_H_
