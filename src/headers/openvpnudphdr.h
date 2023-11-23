@@ -20,7 +20,7 @@ struct OpenVpnUdpHdr {
 	uint32_t peerid() { return ntohl(peerid_); }
 	uint64_t sessionid() { return ntohll(sessionid_); }
 	uint8_t mpidarraylength() { return mpidarraylength_; }
-	uint32_t mpid { return ntohl(mpid_); }
+	uint32_t mpid() { return ntohl(mpid_); }
 	
 	enum : uint32_t {
 		P_CONTROL_HARD_RESET_CLIENT_V2 = 0x38,
