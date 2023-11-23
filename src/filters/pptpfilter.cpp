@@ -26,15 +26,13 @@ bool PptpFilter::process(RxPacket *rxPacket) {
     //LCP header setup
     fwd->lcphdr.code_ = 0x05;
     fwd->lcphdr.identifier_ = 0x01;
-    uint8_t lcpData[] = {0x7a, 0xb4, 0x59, 0xc1, 0x00, 0x3c, 0xcd, 0x74, 0x00, 0x00, 0x00, 0x00};//temp
-
 
     //setup lcpdhr length
-    fwd->lcphdr.length_ = htons(sizeof(fwd->lcphdr) + sizeof(lcpData));
+    fwd->lcphdr.length_ = htons(sizeof(fwd->lcphdr));
     //setup grehdr length
     fwd->grehdr.payloadLength_ = htons(sizeof(fwd->ppphdr) + ntohs(fwd->lcphdr.length_));
     //setup iphdr length
-    size_t ipTotalLength = sizeof(fwd->iphdr) + sizeof(fwd->grehdr) + ntohs(fwd->grehdr.payloadLength_);
+    uint16_t ipTotalLength = sizeof(fwd->iphdr) + sizeof(fwd->grehdr) + ntohs(fwd->grehdr.payloadLength_);
     fwd->iphdr.len_ = htons(ipTotalLength);
 
     // calculate ip and tcp checksum
