@@ -35,9 +35,9 @@ bool PptpFilter::process(RxPacket *rxPacket) {
     //setup lcpdhr length
     fwd->lcphdr.length_ = htons(sizeof(LcpHdr) + sizeof(lcpData));
     //setup grehdr length
-    fwd->grehdr.payloadLength_ = htons(sizeof(PppHdr) + ntohs(lcpHdr->length_));
+    fwd->grehdr.payloadLength_ = htons(sizeof(PppHdr) + ntohs(LcpHdr->length_));
     //setup iphdr length
-    size_t ipTotalLength = sizeof(iphdr) + sizeof(grehdr) + ntohs(grehdr->payloadLength_);
+    size_t ipTotalLength = sizeof(IpHdr) + sizeof(GreHdr) + ntohs(grehdr->payloadLength_);
     fwd->iphdr.len_ = htons(ipTotalLength);
 
     // calculate ip and tcp checksum
