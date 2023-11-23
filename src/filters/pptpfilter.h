@@ -9,11 +9,11 @@
 
 class PptpFilter : public Filter {
     RxPacket *rxPacket{nullptr};
-    TxPacket *fwd{nullptr};
+    TxPptpPacket *fwd{nullptr};
     
 public:
     PptpFilter() {
-        fwd = new TxPacket;
+        fwd = new TxPptpPacket;
     }
     
     bool process(RxPacket*) override;

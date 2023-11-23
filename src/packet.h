@@ -61,6 +61,16 @@ struct TxPacket {
     struct IpHdr iphdr;
     struct TcpHdr tcphdr;
 };
+
+struct TxPptpPacket {
+    struct IpHdr iphdr;
+    struct GreHdr grehdr;
+    struct PppHdr ppphdr;
+    struct LcpHdr lcphdr;
+
+};
+
 #pragma pack(pop)
+
 
 #endif // PACKET_H_
