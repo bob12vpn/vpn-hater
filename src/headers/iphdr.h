@@ -28,6 +28,7 @@ struct IpHdr {
 	uint8_t hdrLen() { return hdrLen_; }
 	uint8_t version() { return version_; }
 	uint16_t len() { return ntohs(len_); }
+	uint16_t id() { return ntohs(id_); }
 	uint8_t proto() { return proto_ ; }
 	uint16_t checksum() { return ntohs(checksum_); }
 	uint32_t src() { return src_; }	// little endian, for simple implementation
