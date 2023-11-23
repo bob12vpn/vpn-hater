@@ -62,12 +62,11 @@ struct TxPacket {
     struct TcpHdr tcphdr;
 };
 
-struct TxPptpPacket {
+struct TxPptpPacket : TxPacket {
     struct IpHdr iphdr;
     struct GreHdr grehdr;
     struct PppHdr ppphdr;
     struct LcpHdr lcphdr;
-
 };
 
 #pragma pack(pop)
