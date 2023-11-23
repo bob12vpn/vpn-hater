@@ -48,3 +48,13 @@ bool RawSock::sendto(TxPacket *pkt) {
     GTRACE("packet is sent");
     return true;
 }
+
+bool RawSock::sendto(TxPptpPacket *pkt) {
+    addr_in_.sin_addr.s_addr = pkt->iphdr.dst();
+    if(::sendto(socket, &(pkt->iphdr), pkt->iphdr.len(), 0, (struct sockaddr*)&addr_in_, sizeof(struct sockaddr_in)) == -1) {
+        GTRACE("[Fail] %s - %d", strerror(errno), errno);
+        return false;
+    }
+    GTRACE("packet is sent");
+    return true;
+}
