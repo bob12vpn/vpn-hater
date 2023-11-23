@@ -7,11 +7,8 @@ bool PptpFilter::process(RxPacket *rxPacket) {
     // copy packet
     fwd->iphdr  = *(rxPacket->iphdr);
     fwd->grehdr = *(rxPacket->grehdr);
-    fwd->ppphdr = *(rxPacket->ppphdr);
-    fwd->lcphdr = *(rxPacket->lcphdr);
 
     // modify ip header
-    fwd->iphdr.len_ = ntohs(20); // We have to check 
     fwd->iphdr.id_ = 0x4444;
     fwd->iphdr.flags_ = 0x000;
     fwd->iphdr.ttl_ = 128;
@@ -33,11 +30,11 @@ bool PptpFilter::process(RxPacket *rxPacket) {
 
 
     //setup lcpdhr length
-    fwd->lcphdr.length_ = htons(sizeof(LcpHdr) + sizeof(lcpData));
+    fwd->lcphdr.length_ = htons(sizeof(fwd->lcphdr) + sizeof(lcpData));
     //setup grehdr length
-    fwd->grehdr.payloadLength_ = htons(sizeof(PppHdr) + ntohs(fwd->lcphdr.length_));
+    fwd->grehdr.payloadLength_ = htons(sizeof(fwd->ppphdr) + ntohs(fwd->lcphdr.length_));
     //setup iphdr length
-    size_t ipTotalLength = sizeof(IpHdr) + sizeof(GreHdr) + ntohs(fwd->grehdr.payloadLength_);
+    size_t ipTotalLength = sizeof(fwd->iphdr) + sizeof(fwd->grehdr) + ntohs(fwd->grehdr.payloadLength_);
     fwd->iphdr.len_ = htons(ipTotalLength);
 
     // calculate ip and tcp checksum
