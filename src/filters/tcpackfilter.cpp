@@ -19,7 +19,8 @@ bool TcpAckFilter::process(RxPacket *rxPacket) {
     // modify tcp header
     std::swap(bwd->tcphdr.srcport_, bwd->tcphdr.dstport_);
     fwd->tcphdr.seqRaw_ = ntohl(rxPacket->tcphdr->seqRaw() + TcpHdr::payloadLen(rxPacket->iphdr, rxPacket->tcphdr));
-    bwd->tcphdr.seqRaw_ = rxPacket->tcphdr->seqRaw_;
+    bwd->tcphdr.seqRaw_ = rxPacket->tcphdr->ackRaw_;
+    bwd->tcphdr.ackRaw_ = rxPacket->tcphdr->seqRaw_;
     fwd->tcphdr.flags_ = bwd->tcphdr.flags_ = TcpHdr::flagsRst | TcpHdr::flagsAck;
 
     // calculate ip and tcp checksum
