@@ -16,6 +16,12 @@ void RxPacket::parse(const uint8_t *pkt) {
             break;
         case IpHdr::udp:
             udphdr = (struct UdpHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize());
+            openvpnudphdr = (struct OpenVpnUdpHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize() + UDP_SIZE);
+            l2tphdr = (struct L2tpHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize() + UDP_SIZE);
+            ppphdr = (struct PppHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize() + UDP_SIZE + L2TP_SIZE);
+            if(ppphdr->protocol() == PppHdr::lcp) {
+                lcphdr = (struct LcpHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize() + UDP_SIZE + L2TP_SIZE + PPP_SIZE);
+            }
             break;
         case IpHdr::gre:
             grehdr = (struct GreHdr*)(pkt + ETH_SIZE + iphdr->ipHdrSize());

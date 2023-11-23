@@ -11,7 +11,9 @@
 #include "headers/ppphdr.h"
 
 #include "headers/openvpntcphdr.h"
+#include "headers/openvpnudphdr.h"
 #include "headers/tlshdr.h"
+#include "headers/l2tphdr.h"
 
 #include "headers/lcphdr.h"
 
@@ -27,7 +29,9 @@ struct RxPacket {
     struct PppHdr *ppphdr{nullptr};
     
     struct OpenVpnTcpHdr *openvpntcphdr{nullptr};
+    struct OpenVpnUdpHdr *openvpnudphdr{nullptr};
     struct TlsHdr *tlshdr{nullptr};
+    struct L2tpHdr *l2tphdr{nullptr};
     
     struct LcpHdr *lcphdr{nullptr};
     
