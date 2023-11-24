@@ -3,7 +3,6 @@
 #include "gtrace.h"
 #include "packet.h"
 #include "rawsock.h"
-#include "utility.h"
 
 #include "filters/filter.h"
 #include "filters/filtermanager.h"
@@ -25,27 +24,22 @@ int main(int argc, char *argv[]) {
     char *mirrorInterface = argv[1];
     char *sendInterface = argv[2];
 
-    pcap_t *mirrorPcap = openPcap(mirrorInterface);
-    if (mirrorPcap == NULL) return -1;
+    RxPacket *rxPacket = new RxPacket;
+    if (!rxPacket->openPcap(mirrorInterface))
+        return -1;
 
     FilterManager filterManager;
-    if (!filterManager.openRawSockets(sendInterface)) {
+    if (!filterManager.openRawSockets(sendInterface))
         return -1;
-    }
 
     if (argc == 4) {
-        if (!filterManager.sniFilter.loadSni(argv[3])) {
+        if (!filterManager.sniFilter.loadSni(argv[3]))
             return -1;
-        }
     }
 
     int pktCnt = 0;
-    RxPacket *rxPacket = new RxPacket;
-    struct pcap_pkthdr *header;
-    const uint8_t *packet;
     while (true) {
-        int res = pcap_next_ex(mirrorPcap, &header, &packet);
-        if (res == 0) {
+        if (!rxPacket->capture()) {
             usleep(1);
             continue;
         }
@@ -53,15 +47,11 @@ int main(int argc, char *argv[]) {
         pktCnt++;
 
         rxPacket->clear();
-        rxPacket->parse(packet);
+        rxPacket->parse();
 
-        if (filterManager.processAll(rxPacket)) {
+        if (filterManager.processAll(rxPacket))
             GTRACE("========%d========", pktCnt);
-        }
     }
-
-    delete rxPacket;
-    pcap_close(mirrorPcap);
 
     return 0;
 }

@@ -12,7 +12,6 @@
 #include <string.h>
 #include <unistd.h>
 
-// network
 #include <pcap.h>
 
 #endif // PCH_H_

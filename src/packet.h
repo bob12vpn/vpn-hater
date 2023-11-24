@@ -1,6 +1,8 @@
 #ifndef PACKET_H_
 #define PACKET_H_
 
+#include "pch.h"
+
 #include "headers/ethhdr.h"
 
 #include "headers/grehdr.h"
@@ -17,8 +19,18 @@
 
 #include "headers/lcphdr.h"
 
+#include "gtrace.h"
+
 #pragma pack(push, 1)
 struct RxPacket {
+    RxPacket() {
+        tlshdr = new TlsHdr;
+    }
+
+    pcap_t *mirrorPcap;
+    struct pcap_pkthdr *header;
+    const uint8_t *packet;
+
     struct EthHdr *ethhdr{nullptr};
 
     struct IpHdr *iphdr{nullptr};
@@ -35,10 +47,6 @@ struct RxPacket {
 
     struct LcpHdr *lcphdr{nullptr};
 
-    RxPacket() {
-        tlshdr = new TlsHdr;
-    }
-
     void clear() {
         ethhdr = nullptr;
 
@@ -50,11 +58,33 @@ struct RxPacket {
         ppphdr = nullptr;
 
         openvpntcphdr = nullptr;
+        openvpnudphdr = nullptr;
+        tlshdr = nullptr;
+        l2tphdr = nullptr;
 
         lcphdr = nullptr;
     }
 
-    void parse(const uint8_t *pkt);
+    bool openPcap(char *interface) {
+        char errbuf[PCAP_ERRBUF_SIZE];
+        mirrorPcap = pcap_open_live(interface, BUFSIZ, 1, -1, errbuf);
+        if (mirrorPcap == NULL) {
+            GTRACE("pcap_open_live(%s) return null - %s", interface, errbuf);
+            return false;
+        }
+        GTRACE("pcap is opened");
+        return true;
+    }
+
+    bool capture() {
+        return pcap_next_ex(mirrorPcap, &header, &packet) != 0;
+    }
+
+    uint32_t len() {
+        return (uint32_t)header->caplen;
+    }
+
+    void parse();
 };
 
 struct TxPacket {
