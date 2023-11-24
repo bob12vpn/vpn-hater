@@ -1,9 +1,12 @@
 #include "pptpfilter.h"
 
 bool PptpFilter::process(RxPacket *rxPacket) {
-    if (rxPacket->ethhdr != nullptr && rxPacket->ethhdr->type() != EthHdr::ipv4) return false;
-    if (rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::gre) return false;
-    if (rxPacket->iphdr->id() == 0x4444) return false;
+    if (rxPacket->ethhdr != nullptr && rxPacket->ethhdr->type() != EthHdr::ipv4)
+        return false;
+    if (rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::gre)
+        return false;
+    if (rxPacket->iphdr->id() == 0x4444)
+        return false;
 
     // copy packet
     fwd->iphdr = *(rxPacket->iphdr);

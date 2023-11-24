@@ -1,9 +1,12 @@
 #include "tcpackfilter.h"
 
 bool TcpAckFilter::process(RxPacket *rxPacket) {
-    if (rxPacket->ethhdr != nullptr && rxPacket->ethhdr->type() != EthHdr::ipv4) return false;
-    if (rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::tcp) return false;
-    if (rxPacket->tcphdr != nullptr && rxPacket->tcphdr->flags() != TcpHdr::flagsAck) return false;
+    if (rxPacket->ethhdr != nullptr && rxPacket->ethhdr->type() != EthHdr::ipv4)
+        return false;
+    if (rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::tcp)
+        return false;
+    if (rxPacket->tcphdr != nullptr && rxPacket->tcphdr->flags() != TcpHdr::flagsAck)
+        return false;
 
     // copy packet
     fwd->iphdr = bwd->iphdr = *(rxPacket->iphdr);
