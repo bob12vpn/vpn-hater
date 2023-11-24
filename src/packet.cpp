@@ -26,6 +26,7 @@ void RxPacket::parse() {
             break;
         case IpHdr::gre:
             grehdr = (struct GreHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize());
+            grehdr->setSeqAck();
             if (grehdr->proto() == GreHdr::ppp) {
                 ppphdr = (struct PppHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize() + grehdr->greHdrSize());
                 if (ppphdr->protocol() == PppHdr::lcp) {
