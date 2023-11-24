@@ -11,6 +11,8 @@ class SniFilter : public Filter {
     TxPacket *fwd{nullptr};
     TxPacket *bwd{nullptr};
 
+    bool isSetLoaded = false;
+
 public:
     SniFilter() {
         fwd = new TxPacket;

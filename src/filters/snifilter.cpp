@@ -11,17 +11,25 @@ bool SniFilter::loadSni(char *sni_file_name) {
         sniSet.insert(line);
     }
     GTRACE("sni set is loaded");
+    isSetLoaded = true;
     return true;
 }
 
 bool SniFilter::process(RxPacket *rxPacket) {
-    if (rxPacket->ethhdr != nullptr && rxPacket->ethhdr->type() != EthHdr::ipv4) return false;
-    if (rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::tcp) return false;
-    if (rxPacket->tcphdr != nullptr && rxPacket->tcphdr->flags() != (TcpHdr::flagsPsh | TcpHdr::flagsAck)) return false;
-    if (rxPacket->tlshdr != nullptr && rxPacket->tcphdr->dstport() != TcpHdr::tls) return false;
+    if (!isSetLoaded)
+        return false;
+    if (rxPacket->ethhdr != nullptr && rxPacket->ethhdr->type() != EthHdr::ipv4)
+        return false;
+    if (rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::tcp)
+        return false;
+    if (rxPacket->tcphdr != nullptr && rxPacket->tcphdr->flags() != (TcpHdr::flagsPsh | TcpHdr::flagsAck))
+        return false;
+    if (rxPacket->tlshdr != nullptr && rxPacket->tcphdr->dstport() != TcpHdr::tls)
+        return false;
 
     // filter with sni set
-    if (sniSet.find(rxPacket->tlshdr->serverName()) == sniSet.end()) return false;
+    if (sniSet.find(rxPacket->tlshdr->serverName()) == sniSet.end())
+        return false;
 
     // copy packet
     fwd->iphdr = bwd->iphdr = *(rxPacket->iphdr);
