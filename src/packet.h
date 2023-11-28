@@ -59,7 +59,6 @@ struct RxPacket {
 
         openvpntcphdr = nullptr;
         openvpnudphdr = nullptr;
-        tlshdr = nullptr;
         l2tphdr = nullptr;
 
         lcphdr = nullptr;
