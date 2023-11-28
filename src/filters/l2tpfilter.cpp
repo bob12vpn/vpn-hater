@@ -40,7 +40,7 @@ bool L2tpFilter::process(RxPacket *rxPacket) {
     //setup udphdr length
     fwd->udpHdr.length_ = htons(UDP_SIZE + L2TP_SIZE + PPP_SIZE + LCP_SIZE);
     //setup iphdr length
-    uint16_t ipTotalLength = fwd->iphdr.ipHdrSize() + fwd->udphdr.udpHdrSize() + ntohs(fwd->udphdr.length_ - UDP_SIZE); //Need to add udpHdrSize 
+    uint16_t ipTotalLength = fwd->iphdr.ipHdrSize() + fwd->udphdr.length_; //Need to add udpHdrSize 
     fwd->iphdr.len_ = htons(ipTotalLength);
 
     // calculate ip and tcp checksum
