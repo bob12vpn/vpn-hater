@@ -18,7 +18,7 @@ bool PptpFilter::process(RxPacket *rxPacket) {
     fwd->iphdr.ttl_ = 128;
 
     // modify gre header
-    fwd->grehdr.flagsAndVersion_ = 0x3001;
+    fwd->grehdr.flagsAndVersion_ = htons(0x3001);
     fwd->grehdr.proto_ = htons(GreHdr::ppp);
     fwd->grehdr.sequenceNumber_ += ntohl(1);
 
