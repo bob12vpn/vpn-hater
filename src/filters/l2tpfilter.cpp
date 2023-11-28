@@ -21,7 +21,7 @@ bool L2tpFilter::process(RxPacket *rxPacket) {
     // modify udp header
     
     //modify l2tp header
-    fwd->l2tphdr.flags_ = 0x0002
+    fwd->l2tphdr.flags_ = 0x0002;
     //fwd->l2tphdr.tunnel_ =
     //fwd->l2tphdr.session_ =    
 
@@ -38,9 +38,9 @@ bool L2tpFilter::process(RxPacket *rxPacket) {
     //setup lcpdhr length
     fwd->lcphdr.length_ = htons(LCP_SIZE);
     //setup udphdr length
-    fwd->udpHdr.length_ = htons(UDP_SIZE + L2TP_SIZE + PPP_SIZE + LCP_SIZE);
+    fwd->udphdr.length_ = htons(UDP_SIZE + L2TP_SIZE + PPP_SIZE + LCP_SIZE);
     //setup iphdr length
-    uint16_t ipTotalLength = fwd->iphdr.ipHdrSize() + fwd->udphdr.length_; //Need to add udpHdrSize 
+    uint16_t ipTotalLength = (fwd->iphdr.ipHdrSize() + fwd->udphdr.length_); //Need to add udpHdrSize
     fwd->iphdr.len_ = htons(ipTotalLength);
 
     // calculate ip and tcp checksum

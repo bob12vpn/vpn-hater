@@ -99,6 +99,14 @@ struct TxPptpPacket : TxPacket {
     struct LcpHdr lcphdr;
 };
 
+struct TxL2tpPacket : TxPacket {
+    struct IpHdr iphdr;
+    struct UdpHdr udphdr;
+    struct L2tpHdr l2tphdr;
+    struct PppHdr ppphdr;
+    struct LcpHdr lcphdr;
+};
+
 #pragma pack(pop)
 
 #endif // PACKET_H_

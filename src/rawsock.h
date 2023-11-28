@@ -15,6 +15,7 @@ struct RawSock {
 
     bool sendto(TxPacket *);
     bool sendto(TxPptpPacket *);
+    bool sendto(TxL2tpPacket *);
 };
 
 #endif // RAWSOK_H_
