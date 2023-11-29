@@ -1,7 +1,8 @@
 #include "rawsock.h"
 
 bool RawSock::open(char *interface) {
-    if (socket) return false;
+    if (socket)
+        return false;
 
     socket = ::socket(PF_INET, SOCK_RAW, IPPROTO_RAW);
     if (!socket) {
@@ -39,7 +40,7 @@ bool RawSock::close() {
     return true;
 }
 
-bool RawSock::sendto(TxPacket *pkt) {
+bool RawSock::sendto(TxTcpPacket *pkt) {
     addr_in_.sin_addr.s_addr = pkt->iphdr.dst();
     if (::sendto(socket, &(pkt->iphdr), pkt->iphdr.len(), 0, (struct sockaddr *)&addr_in_, sizeof(struct sockaddr_in)) == -1) {
         GTRACE("[Fail] %s - %d", strerror(errno), errno);

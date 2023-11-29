@@ -86,19 +86,19 @@ struct RxPacket {
     void parse();
 };
 
-struct TxPacket {
+struct TxTcpPacket {
     struct IpHdr iphdr;
     struct TcpHdr tcphdr;
 };
 
-struct TxPptpPacket : TxPacket {
+struct TxPptpPacket {
     struct IpHdr iphdr;
     struct GreHdr grehdr;
     struct PppHdr ppphdr;
     struct LcpHdr lcphdr;
 };
 
-struct TxL2tpPacket : TxPacket {
+struct TxL2tpPacket {
     struct IpHdr iphdr;
     struct UdpHdr udphdr;
     struct L2tpHdr l2tphdr;

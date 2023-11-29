@@ -13,7 +13,7 @@ struct RawSock {
     bool open(char *);
     bool close();
 
-    bool sendto(TxPacket *);
+    bool sendto(TxTcpPacket *);
     bool sendto(TxPptpPacket *);
     bool sendto(TxL2tpPacket *);
 };

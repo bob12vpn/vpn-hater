@@ -8,13 +8,13 @@
 
 class OpenVpnTcpFilter : public Filter {
     RxPacket *rxPacket{nullptr};
-    TxPacket *fwd{nullptr};
-    TxPacket *bwd{nullptr};
+    TxTcpPacket *fwd{nullptr};
+    TxTcpPacket *bwd{nullptr};
 
 public:
     OpenVpnTcpFilter() {
-        fwd = new TxPacket;
-        bwd = new TxPacket;
+        fwd = new TxTcpPacket;
+        bwd = new TxTcpPacket;
     }
 
     bool process(RxPacket *) override;

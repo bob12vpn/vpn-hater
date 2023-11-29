@@ -8,15 +8,15 @@
 
 class SniFilter : public Filter {
     RxPacket *rxPacket{nullptr};
-    TxPacket *fwd{nullptr};
-    TxPacket *bwd{nullptr};
+    TxTcpPacket *fwd{nullptr};
+    TxTcpPacket *bwd{nullptr};
 
     bool isSetLoaded = false;
 
 public:
     SniFilter() {
-        fwd = new TxPacket;
-        bwd = new TxPacket;
+        fwd = new TxTcpPacket;
+        bwd = new TxTcpPacket;
     }
 
     std::unordered_set<std::string> sniSet;
