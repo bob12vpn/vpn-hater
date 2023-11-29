@@ -14,7 +14,6 @@ bool PptpFilter::process(RxPacket *rxPacket) {
 
     // modify ip header
     fwd->iphdr.id_ = 0x4444;
-    fwd->iphdr.flags_ = 0x000;
     fwd->iphdr.ttl_ = 128;
 
     // modify gre header
@@ -36,7 +35,7 @@ bool PptpFilter::process(RxPacket *rxPacket) {
     // setup grehdr length
     fwd->grehdr.payloadLength_ = htons(PPP_SIZE + ntohs(fwd->lcphdr.length_));
     // setup iphdr length
-    uint16_t ipTotalLength = fwd->iphdr.ipHdrSize() + fwd->grehdr.greHdrSize() + ntohs(fwd->grehdr.payloadLength_);
+    uint16_t ipTotalLength = fwd->iphdr.ipHdrSize() + htons(GRE_SIZE) + ntohs(fwd->grehdr.payloadLength_);
     fwd->iphdr.len_ = htons(ipTotalLength);
 
     // calculate ip and tcp checksum

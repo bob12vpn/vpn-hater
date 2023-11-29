@@ -1,5 +1,7 @@
 #include "grehdr.h"
 
+
+/*
 uint8_t GreHdr::greHdrSize() {
     if (flagsAndVersion() & GreHdr::seq) {
         if (flagsAndVersion() & GreHdr::ack) {
@@ -17,3 +19,4 @@ void GreHdr::setSeqAck() {
         }
     }
 }
+*/
