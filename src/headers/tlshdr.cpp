@@ -1,18 +1,20 @@
 #include "tlshdr.h"
 
-void TlsHdr::parse(const uint8_t *pkt) {
-    int offset = 0;
+void TlsHdr::parse(const uint8_t *pkt, uint32_t len) {
+    uint32_t offset = 0;
 
     contentType_ = (uint8_t)pkt[offset];
     offset += 3;
-    if (contentType() != TlsHdr::handshake) return;
+    if (contentType() != TlsHdr::handshake)
+        return;
 
     length_ = (uint16_t)(pkt[offset] << 8 | pkt[offset + 1]);
     offset += 2;
 
     type_ = (uint8_t)pkt[offset];
     offset += 1;
-    if (type() != TlsHdr::clientHello) return;
+    if (type() != TlsHdr::clientHello)
+        return;
 
     handshakeLength_ = (uint32_t)(pkt[offset + 1] << 16 | pkt[offset + 2] << 8 | pkt[offset + 3]);
     offset += 37;
@@ -29,7 +31,7 @@ void TlsHdr::parse(const uint8_t *pkt) {
     extensionsLength_ = (uint16_t)(pkt[offset] << 8 | pkt[offset + 1]);
     offset += 2;
 
-    while (true) {
+    while (offset < len) {
         extensionType_ = (uint16_t)(pkt[offset] << 8 | pkt[offset + 1]);
         offset += 2;
 
