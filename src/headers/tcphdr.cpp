@@ -17,9 +17,17 @@ uint16_t TcpHdr::calcTcpChecksum(IpHdr *iphdr, TcpHdr *tcphdr) {
     ret += (ntohs(iphdr->dst() >> 16)) + (ntohs(iphdr->dst() & 0xFFFF));
     ret += iphdr->proto();
     ret += tcphdr->tcpHdrSize();
-    for (int i = 0; i < tcphdr->tcpHdrSize(); i += 2) {
-        ret += (*((uint8_t *)tcphdr + i) << 8) + (*((uint8_t *)tcphdr + i + 1));
+
+    uint16_t len = tcphdr->payloadLen(iphdr, tcphdr) + tcphdr->tcpHdrSize();
+    uint16_t *pword = reinterpret_cast<uint16_t *>(tcphdr);
+    for (int i = 0; i < len / 2; i++) {
+        ret += htons(*pword);
+        pword++;
     }
+    if (len & 1) {
+        ret += uint32_t(*(reinterpret_cast<uint8_t *>(pword)) << 8);
+    }
+
     ret += ret >> 16;
     return ntohs(~(uint16_t)ret);
 }

@@ -3,6 +3,8 @@
 
 #include "hpch.h"
 
+#include "iphdr.h"
+
 #define UDP_SIZE 8
 
 #pragma pack(push, 1)
@@ -16,6 +18,8 @@ struct UdpHdr {
     uint16_t dstport() { return ntohs(dstport_); }
     uint16_t length() { return ntohs(length_); }
     uint16_t checksum() { return ntohs(checksum_); }
+
+    static uint16_t calcUdpChecksum(IpHdr *, UdpHdr *);
 
     enum : uint16_t {
         dns = 53,
