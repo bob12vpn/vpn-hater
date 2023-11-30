@@ -11,12 +11,12 @@ bool SniFilter::loadSni(char *sni_file_name) {
         sniSet.insert(line);
     }
     GTRACE("sni set is loaded");
-    isSetLoaded = true;
+    isSniSetLoaded = true;
     return true;
 }
 
 bool SniFilter::process(RxPacket *rxPacket) {
-    if (!isSetLoaded)
+    if (!isSniSetLoaded)
         return false;
     if (rxPacket->ethhdr != nullptr && rxPacket->ethhdr->type() != EthHdr::ipv4)
         return false;
@@ -24,11 +24,20 @@ bool SniFilter::process(RxPacket *rxPacket) {
         return false;
     if (rxPacket->tcphdr != nullptr && rxPacket->tcphdr->flags() != (TcpHdr::flagsPsh | TcpHdr::flagsAck))
         return false;
-    if (rxPacket->tlshdr != nullptr && rxPacket->tcphdr->dstport() != TcpHdr::tls)
-        return false;
 
-    // filter with sni set
-    if (sniSet.find(rxPacket->tlshdr->serverName()) == sniSet.end())
+    flowKey.init(rxPacket);
+    if (flow.find(flowKey) == flow.end()) {
+        flow.insert({flowKey, 0});
+    }
+
+    if (flow[flowKey] == 0) {
+        if (rxPacket->tlshdr != nullptr && rxPacket->tcphdr->dstport() != TcpHdr::tls)
+            return false;
+        if (sniSet.find(rxPacket->tlshdr->serverName()) == sniSet.end())
+            return false;
+    }
+
+    if (++flow[flowKey] < SNI_HIT_COUNT)
         return false;
 
     // copy packet

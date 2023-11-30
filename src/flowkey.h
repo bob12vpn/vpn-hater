@@ -1,20 +1,29 @@
+#ifndef FLOWKEY_H_
+#define FLOWKEY_H_
+
 #include "pch.h"
 
-struct FlowKey {
-    uint32_t srcIp;
-    uint32_t dstIp;
-    uint16_t srcPort;
-    uint16_t dstPort;
+#include "packet.h"
+
+typedef struct FlowKey {
+    uint32_t ip1;
+    uint32_t ip2;
+    uint16_t port1;
+    uint16_t port2;
+
+    void init(RxPacket *);
 
     bool operator<(const FlowKey &var) const {
-        if (srcIp != var.srcIp) {
-            return srcIp < var.srcIp;
-        } else if (dstIp != var.dstIp) {
-            return dstIp < var.dstIp;
-        } else if (srcPort != var.srcPort) {
-            return srcPort < var.srcPort;
+        if (ip1 != var.ip1) {
+            return ip1 < var.ip1;
+        } else if (ip2 != var.ip2) {
+            return ip2 < var.ip2;
+        } else if (port1 != var.port1) {
+            return port1 < var.port1;
         } else {
-            return dstPort < var.dstPort;
+            return port2 < var.port2;
         }
     }
-};
+} FlowKey;
+
+#endif // FLOWKEY_H_

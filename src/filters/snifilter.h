@@ -3,15 +3,20 @@
 
 #include "../pch.h"
 
+#include "../flowkey.h"
 #include "../packet.h"
 #include "filter.h"
 
+#define SNI_HIT_COUNT 5
+
 class SniFilter : public Filter {
-    RxPacket *rxPacket{nullptr};
     TxTcpPacket *fwd{nullptr};
     TxTcpPacket *bwd{nullptr};
 
-    bool isSetLoaded = false;
+    bool isSniSetLoaded = false;
+
+    FlowKey flowKey;
+    std::map<FlowKey, uint32_t> flow;
 
 public:
     SniFilter() {
