@@ -1,12 +1,12 @@
 #include "pch.h"
 
-struct StreamKey {
+struct FlowKey {
     uint32_t srcIp;
     uint32_t dstIp;
     uint16_t srcPort;
     uint16_t dstPort;
 
-    bool operator<(const StreamKey &var) const {
+    bool operator<(const FlowKey &var) const {
         if (srcIp != var.srcIp) {
             return srcIp < var.srcIp;
         } else if (dstIp != var.dstIp) {
