@@ -5,7 +5,7 @@ bool L2tpFilter::process(RxPacket *rxPacket) {
         return false;
     if (rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::udp)
         return false;
-    if (rxPacket->iphdr != nullptr && (rxPacket->udphdr->dstport() == 1701 || rxPacket->udphdr->srcport() == 1701))
+    if (rxPacket->iphdr != nullptr && (rxPacket->udphdr->dstport() != 1701 || rxPacket->udphdr->srcport() != 1701))
         return false;
     if (rxPacket->iphdr->id() == 0x4444)
         return false;
