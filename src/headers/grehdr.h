@@ -15,7 +15,7 @@ struct GreHdr {
 
     uint16_t flagsAndVersion() { return ntohs(flagsAndVersion_); }
     uint16_t proto() { return ntohs(proto_); }
-    uint16_t payload_length() { return ntohs(payloadLength_); }
+    uint16_t payloadLength() { return ntohs(payloadLength_); }
     uint16_t callId() { return ntohs(callId_); }
     uint32_t sequenceNumber() { return ntohl(sequenceNumber_); }
     //uint32_t ackNumber() { return ntohl(ackNumber_); }
