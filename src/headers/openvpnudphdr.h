@@ -9,14 +9,12 @@
 
 #pragma pack(push, 1)
 struct OpenVpnUdpHdr {
-    uint32_t type_ : 8,
-        peerid_ : 24;
+    uint8_t type_;
     uint64_t sessionid_;
     uint8_t mpidarraylength_;
     uint32_t mpid_;
 
     uint8_t type() { return (uint8_t)type_; }
-    uint32_t peerid() { return ntohl(peerid_); }
     uint64_t sessionid() { return ntohll(sessionid_); }
     uint8_t mpidarraylength() { return mpidarraylength_; }
     uint32_t mpid() { return ntohl(mpid_); }
