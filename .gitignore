@@ -3,3 +3,4 @@ block-packet
 *.o
 .vscode
 *.log
+obj
