@@ -1,0 +1,20 @@
+#include "pch.h"
+
+struct StreamKey {
+    uint32_t srcIp;
+    uint32_t dstIp;
+    uint16_t srcPort;
+    uint16_t dstPort;
+
+    bool operator<(const StreamKey &var) const {
+        if (srcIp != var.srcIp) {
+            return srcIp < var.srcIp;
+        } else if (dstIp != var.dstIp) {
+            return dstIp < var.dstIp;
+        } else if (srcPort != var.srcPort) {
+            return srcPort < var.srcPort;
+        } else {
+            return dstPort < var.dstPort;
+        }
+    }
+};
