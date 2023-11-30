@@ -7,7 +7,7 @@
 #include "../packet.h"
 #include "filter.h"
 
-#define SNI_HIT_COUNT 5
+#define SNI_HIT_COUNT 1
 
 class SniFilter : public Filter {
     TxTcpPacket *fwd{nullptr};
