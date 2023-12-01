@@ -4,11 +4,6 @@ uint16_t TcpHdr::payloadLen(IpHdr *iphdr, TcpHdr *tcphdr) {
     return iphdr->len() - iphdr->ipHdrSize() - tcphdr->tcpHdrSize();
 }
 
-/**
- * Q. Why didn't you add payload? To calculate checksum, you should add not only header but also payload.
- * A. Because this function is only used in making TxPacket that has no payload.
- *    Same reason, padding is also ignored.
- */
 uint16_t TcpHdr::calcTcpChecksum(IpHdr *iphdr, TcpHdr *tcphdr) {
     uint32_t ret = 0;
     tcphdr->checksum_ = 0;
