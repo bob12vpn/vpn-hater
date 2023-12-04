@@ -1,5 +1,16 @@
 #include "packet.h"
 
+bool RxPacket::openPcap(char *interface) {
+    char errbuf[PCAP_ERRBUF_SIZE];
+    mirrorPcap = pcap_open_live(interface, BUFSIZ, 1, -1, errbuf);
+    if (mirrorPcap == NULL) {
+        GTRACE("pcap_open_live(%s) return null - %s", interface, errbuf);
+        return false;
+    }
+    GTRACE("pcap is opened");
+    return true;
+}
+
 void RxPacket::parse() {
     ethhdr = (struct EthHdr *)(packet);
     switch (ethhdr->type()) {
@@ -26,7 +37,7 @@ void RxPacket::parse() {
             break;
         case IpHdr::gre:
             grehdr = (struct GreHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize());
-            //grehdr->setSeqAck();
+            // grehdr->setSeqAck();
             if (grehdr->proto() == GreHdr::ppp) {
                 ppphdr = (struct PppHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize() + GRE_SIZE);
                 if (ppphdr->protocol() == PppHdr::lcp) {

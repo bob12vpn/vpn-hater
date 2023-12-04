@@ -64,25 +64,10 @@ struct RxPacket {
         lcphdr = nullptr;
     }
 
-    bool openPcap(char *interface) {
-        char errbuf[PCAP_ERRBUF_SIZE];
-        mirrorPcap = pcap_open_live(interface, BUFSIZ, 1, -1, errbuf);
-        if (mirrorPcap == NULL) {
-            GTRACE("pcap_open_live(%s) return null - %s", interface, errbuf);
-            return false;
-        }
-        GTRACE("pcap is opened");
-        return true;
-    }
+    bool capture() { return pcap_next_ex(mirrorPcap, &header, &packet) != 0; }
+    uint32_t len() { return (uint32_t)header->caplen; }
 
-    bool capture() {
-        return pcap_next_ex(mirrorPcap, &header, &packet) != 0;
-    }
-
-    uint32_t len() {
-        return (uint32_t)header->caplen;
-    }
-
+    bool openPcap(char *);
     void parse();
 };
 
