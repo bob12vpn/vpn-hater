@@ -19,9 +19,8 @@ uint16_t TcpHdr::calcTcpChecksum(IpHdr *iphdr, TcpHdr *tcphdr) {
         ret += htons(*pword);
         pword++;
     }
-    if (len & 1) {
+    if (len & 1)
         ret += uint32_t(*(reinterpret_cast<uint8_t *>(pword)) << 8);
-    }
 
     ret += ret >> 16;
     return ntohs(~(uint16_t)ret);
