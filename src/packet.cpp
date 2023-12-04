@@ -17,6 +17,9 @@ void RxPacket::parse() {
     case EthHdr::ipv4:
         iphdr = (struct IpHdr *)(packet + ETH_SIZE);
         switch (iphdr->proto()) {
+        case IpHdr::icmp:
+            icmphdr = (struct IcmpHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize());
+            break;
         case IpHdr::tcp:
             tcphdr = (struct TcpHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize());
             if (tcphdr->payloadLen(iphdr, tcphdr) == 0)
@@ -37,15 +40,14 @@ void RxPacket::parse() {
             break;
         case IpHdr::gre:
             grehdr = (struct GreHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize());
-            // grehdr->setSeqAck();
             if (grehdr->proto() == GreHdr::ppp) {
                 ppphdr = (struct PppHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize() + GRE_SIZE);
                 if (ppphdr->protocol() == PppHdr::lcp) {
                     lcphdr = (struct LcpHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize() + GRE_SIZE + PPP_SIZE);
                 }
-            } // grehdr
+            }
             break;
-        } // iphdr
+        }
         break;
     }
 }

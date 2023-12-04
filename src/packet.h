@@ -8,6 +8,7 @@
 #include "headers/grehdr.h"
 #include "headers/iphdr.h"
 
+#include "headers/icmphdr.h"
 #include "headers/ppphdr.h"
 #include "headers/tcphdr.h"
 #include "headers/udphdr.h"
@@ -30,36 +31,39 @@ struct RxPacket {
     pcap_t *mirrorPcap;
     struct pcap_pkthdr *header;
     const uint8_t *packet;
+    uint8_t *rawByte;
 
     struct EthHdr *ethhdr{nullptr};
 
-    struct IpHdr *iphdr{nullptr};
     struct GreHdr *grehdr{nullptr};
+    struct IpHdr *iphdr{nullptr};
 
+    struct IcmpHdr *icmphdr{nullptr};
+    struct PppHdr *ppphdr{nullptr};
     struct TcpHdr *tcphdr{nullptr};
     struct UdpHdr *udphdr{nullptr};
-    struct PppHdr *ppphdr{nullptr};
 
+    struct L2tpHdr *l2tphdr{nullptr};
     struct OpenVpnTcpHdr *openvpntcphdr{nullptr};
     struct OpenVpnUdpHdr *openvpnudphdr{nullptr};
-    struct TlsHdr *tlshdr{nullptr};
-    struct L2tpHdr *l2tphdr{nullptr};
+    struct TlsHdr *tlshdr{nullptr}; // never clear this ptr
 
     struct LcpHdr *lcphdr{nullptr};
 
     void clear() {
         ethhdr = nullptr;
 
-        iphdr = nullptr;
         grehdr = nullptr;
+        iphdr = nullptr;
 
+        icmphdr = nullptr;
+        ppphdr = nullptr;
         tcphdr = nullptr;
         udphdr = nullptr;
-        ppphdr = nullptr;
 
+        l2tphdr = nullptr;
         openvpntcphdr = nullptr;
         openvpnudphdr = nullptr;
-        l2tphdr = nullptr;
 
         lcphdr = nullptr;
     }

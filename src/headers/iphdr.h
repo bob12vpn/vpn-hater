@@ -39,6 +39,7 @@ struct IpHdr {
     static uint16_t calcIpChecksum(IpHdr *);
 
     enum : uint16_t {
+        icmp = 1,
         tcp = 6,
         udp = 17,
         gre = 47
