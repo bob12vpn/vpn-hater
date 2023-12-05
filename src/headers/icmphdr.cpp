@@ -1,6 +1,6 @@
 #include "icmphdr.h"
 
-static uint16_t calcIcmpChecksum(IpHdr *iphdr, IcmpHdr *icmphdr) {
+uint16_t IcmpHdr::calcIcmpChecksum(IpHdr *iphdr, IcmpHdr *icmphdr) {
     uint32_t ret = 0;
     icmphdr->checksum_ = 0;
 
