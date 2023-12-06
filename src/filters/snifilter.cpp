@@ -26,18 +26,31 @@ bool SniFilter::process(RxPacket *rxPacket) {
         return false;
 
     flowKey.init(rxPacket);
-    if (flow.find(flowKey) == flow.end()) {
-        flow.insert({flowKey, 0});
+    if (flow[flowKey].state == FlowValue::allow)
+        return false;
+    else if (flow[flowKey].state == FlowValue::unknown) {
+        flow.insert({flowKey, {0, FlowValue::unknown}});
+
+        if (rxPacket->tlshdr != nullptr && rxPacket->tcphdr->dstport() != TcpHdr::tls) {
+            flow[flowKey].state = FlowValue::allow;
+            return false;
+        }
+
+        rxPacket->tlshdr = new TlsHdr;
+        uint32_t offset = ETH_SIZE + rxPacket->iphdr->ipHdrSize() + rxPacket->tcphdr->tcpHdrSize();
+        if (!rxPacket->tlshdr->parse(rxPacket->packet + offset,
+                                     rxPacket->len() - offset))
+            return false;
+
+        if (sniSet.find(rxPacket->tlshdr->serverName()) == sniSet.end()) {
+            flow[flowKey].state = FlowValue::allow;
+            return false;
+        } else {
+            flow[flowKey].state = FlowValue::block;
+        }
     }
 
-    if (flow[flowKey] == 0) {
-        if (rxPacket->tlshdr != nullptr && rxPacket->tcphdr->dstport() != TcpHdr::tls)
-            return false;
-        if (sniSet.find(rxPacket->tlshdr->serverName()) == sniSet.end())
-            return false;
-    }
-
-    if (++flow[flowKey] < SNI_HIT_COUNT)
+    if (++flow[flowKey].resetCnt < SNI_HIT_COUNT)
         return false;
 
     // copy packet

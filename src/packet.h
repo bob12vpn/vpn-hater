@@ -31,7 +31,6 @@ struct RxPacket {
     pcap_t *mirrorPcap;
     struct pcap_pkthdr *header;
     const uint8_t *packet;
-    uint8_t *rawByte;
 
     struct EthHdr *ethhdr{nullptr};
 
@@ -46,7 +45,7 @@ struct RxPacket {
     struct L2tpHdr *l2tphdr{nullptr};
     struct OpenVpnTcpHdr *openvpntcphdr{nullptr};
     struct OpenVpnUdpHdr *openvpnudphdr{nullptr};
-    struct TlsHdr *tlshdr{nullptr}; // never clear this ptr
+    struct TlsHdr *tlshdr{nullptr};
 
     struct LcpHdr *lcphdr{nullptr};
 

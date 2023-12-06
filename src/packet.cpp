@@ -24,9 +24,6 @@ void RxPacket::parse() {
             tcphdr = (struct TcpHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize());
             if (tcphdr->payloadLen(iphdr, tcphdr) == 0)
                 break;
-            if (tcphdr->dstport() == TcpHdr::tls) {
-                tlshdr->parse(packet + ETH_SIZE + iphdr->ipHdrSize() + tcphdr->tcpHdrSize(), len());
-            }
             openvpntcphdr = (struct OpenVpnTcpHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize() + tcphdr->tcpHdrSize());
             break;
         case IpHdr::udp:

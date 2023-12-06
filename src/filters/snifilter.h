@@ -16,7 +16,15 @@ class SniFilter : public Filter {
     bool isSniSetLoaded = false;
 
     FlowKey flowKey;
-    std::map<FlowKey, uint32_t> flow;
+    struct FlowValue {
+        uint32_t resetCnt = 0;
+        enum {
+            unknown,
+            allow,
+            block
+        } state;
+    };
+    std::map<FlowKey, FlowValue> flow;
 
 public:
     SniFilter() {

@@ -41,7 +41,8 @@ struct TlsHdr {
     uint16_t serverNameLen() { return serverNameLen_; }
     std::string serverName() { return serverName_; }
 
-    void parse(const uint8_t *, uint32_t);
+    bool parse(const uint8_t *, uint32_t);
+    void clear();
 
     enum : uint8_t {
         handshake = 22,
