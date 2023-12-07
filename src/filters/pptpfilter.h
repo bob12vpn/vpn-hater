@@ -7,7 +7,6 @@
 #include "filter.h"
 
 class PptpFilter : public Filter {
-    RxPacket *rxPacket{nullptr};
     TxPptpPacket *fwd{nullptr};
 
 public:

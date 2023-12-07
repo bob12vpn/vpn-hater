@@ -3,20 +3,18 @@
 
 #include "../pch.h"
 
-#include "filter.h"
 #include "../packet.h"
-
+#include "filter.h"
 
 class L2tpFilter : public Filter {
-    RxPacket *rxPacket{nullptr};
     TxL2tpPacket *fwd{nullptr};
-    
+
 public:
     L2tpFilter() {
         fwd = new TxL2tpPacket;
     }
-    
-    bool process(RxPacket*) override;
+
+    bool process(RxPacket *) override;
 };
 
 #endif // L2TPFILTER_H_

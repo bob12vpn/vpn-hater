@@ -7,7 +7,6 @@
 #include "filter.h"
 
 class OpenVpnTcpFilter : public Filter {
-    RxPacket *rxPacket{nullptr};
     TxTcpPacket *fwd{nullptr};
     TxTcpPacket *bwd{nullptr};
 

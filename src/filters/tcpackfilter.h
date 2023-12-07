@@ -7,7 +7,6 @@
 #include "filter.h"
 
 class TcpAckFilter : public Filter {
-    RxPacket *rxPacket{nullptr};
     TxTcpPacket *fwd{nullptr};
     TxTcpPacket *bwd{nullptr};
 
