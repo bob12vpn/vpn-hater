@@ -3,10 +3,28 @@
 bool PptpFilter::process(RxPacket *rxPacket) {
     if (rxPacket->ethhdr != nullptr && rxPacket->ethhdr->type() != EthHdr::ipv4)
         return false;
-    if (rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::gre)
-        return false;
     if (rxPacket->iphdr->id() == 0x4444)
         return false;
+
+    flowKey.init(rxPacket);
+    if (flow.find(flowKey) == flow.end()) {
+        flow.insert({flowKey, {0, FlowValue::unknown}});
+    }
+
+    if (flow[flowKey].state == FlowValue::allow) {
+        return false;
+    } else if (flow[flowKey].state == FlowValue::unknown) {
+        if (rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::gre) {
+            flow[flowKey].state = FlowValue::allow;
+            return false;
+        }
+    }
+
+    if (++flow[flowKey].resetCnt < PPTP_HIT_COUNT) {
+        return false;
+    } else {
+        flow[flowKey].state = FlowValue::block;
+    }
 
     // copy packet
     fwd->iphdr = *(rxPacket->iphdr);

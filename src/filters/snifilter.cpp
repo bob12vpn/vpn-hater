@@ -26,11 +26,13 @@ bool SniFilter::process(RxPacket *rxPacket) {
         return false;
 
     flowKey.init(rxPacket);
-    if (flow[flowKey].state == FlowValue::allow)
-        return false;
-    else if (flow[flowKey].state == FlowValue::unknown) {
+    if (flow.find(flowKey) == flow.end()) {
         flow.insert({flowKey, {0, FlowValue::unknown}});
+    }
 
+    if (flow[flowKey].state == FlowValue::allow) {
+        return false;
+    } else if (flow[flowKey].state == FlowValue::unknown) {
         if (rxPacket->tlshdr != nullptr && rxPacket->tcphdr->dstport() != TcpHdr::tls) {
             flow[flowKey].state = FlowValue::allow;
             return false;
