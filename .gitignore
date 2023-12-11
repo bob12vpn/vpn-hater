@@ -1,6 +1,5 @@
-block-packet
+vpnblock-packet-injection
 *.swp
-*.o
-.vscode
+.vscode/
 *.log
-obj
+obj/
