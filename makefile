@@ -1,4 +1,4 @@
-TARGET=block-packet
+TARGET=vpnblock-packet-injection
 SRCDIR=./src
 SRCHDRDIR=./src/headers
 SRCFILDIR=./src/filters
@@ -23,4 +23,4 @@ $(TARGET): $(OBJS)
 	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 clean:
-	rm -rf $(TARGET) $(OBJDIR) block-packet.log
+	rm -rf $(TARGET) $(OBJDIR) *.log

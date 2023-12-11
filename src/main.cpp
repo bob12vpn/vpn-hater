@@ -14,7 +14,7 @@ void usage() {
 }
 
 int main(int argc, char *argv[]) {
-    gtrace_default("127.0.0.1", 8908, 1, "block-packet.log");
+    gtrace_default("127.0.0.1", 8908, 1, "vpnblock-packet-injection.log");
     GTRACE("Logging level : Message");
 
     if (argc < 3) {
