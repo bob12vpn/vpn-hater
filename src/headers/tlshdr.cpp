@@ -1,47 +1,51 @@
 #include "tlshdr.h"
 
+#define READ8  pkt[offset]
+#define READ16 (uint16_t)(pkt[offset] << 8 | pkt[offset + 1])
+#define READ24 (uint32_t)(pkt[offset + 1] << 16 | pkt[offset + 2] << 8 | pkt[offset + 3])
+
 bool TlsHdr::parse(const uint8_t *pkt, uint32_t len) {
     uint32_t offset = 0;
 
-    contentType_ = pkt[offset];
+    contentType_ = READ8;
     offset += 3;
     if (contentType() != TlsHdr::handshake)
         return false;
 
-    length_ = (uint16_t)(pkt[offset] << 8 | pkt[offset + 1]);
+    length_ = READ16;
     offset += 2;
 
-    type_ = pkt[offset];
+    type_ = READ8;
     offset += 1;
     if (type() != TlsHdr::clientHello)
         return false;
 
-    handshakeLength_ = (uint32_t)(pkt[offset + 1] << 16 | pkt[offset + 2] << 8 | pkt[offset + 3]);
+    handshakeLength_ = READ24;
     offset += 37;
 
-    sessionIdLength_ = pkt[offset];
+    sessionIdLength_ = READ8;
     offset += sessionIdLength() + 1;
 
-    cipherSuitesLength_ = (uint16_t)(pkt[offset] << 8 | pkt[offset + 1]);
+    cipherSuitesLength_ = READ16;
     offset += cipherSuitesLength() + 2;
 
-    compMethodsLength_ = pkt[offset];
+    compMethodsLength_ = READ8;
     offset += compMethodsLength() + 1;
 
-    extensionsLength_ = (uint16_t)(pkt[offset] << 8 | pkt[offset + 1]);
+    extensionsLength_ = READ16;
     offset += 2;
 
     while (offset < len) {
-        extensionType_ = (uint16_t)(pkt[offset] << 8 | pkt[offset + 1]);
+        extensionType_ = READ16;
         offset += 2;
 
-        len_ = (uint16_t)(pkt[offset] << 8 | pkt[offset + 1]);
+        len_ = READ16;
         offset += 2;
 
         if (extensionType_ == TlsHdr::typeServerName) {
             offset += 3;
 
-            serverNameLen_ = (uint16_t)(pkt[offset] << 8 | pkt[offset + 1]);
+            serverNameLen_ = READ16;
             offset += 2;
 
             serverName_ = std::string(pkt + offset, pkt + offset + serverNameLen());
