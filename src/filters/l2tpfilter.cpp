@@ -8,26 +8,6 @@ bool L2tpFilter::process(RxPacket *rxPacket) {
     if (rxPacket->iphdr->id() == 0x4444)
         return false;
 
-    flowKey.init(rxPacket);
-    if (flow.find(flowKey) == flow.end()) {
-        flow.insert({flowKey, {0, FlowValue::unknown}});
-    }
-
-    if (flow[flowKey].state == FlowValue::allow) {
-        return false;
-    } else if (flow[flowKey].state == FlowValue::unknown) {
-        if ((rxPacket->udphdr->dstport() != 1701 || rxPacket->udphdr->srcport() != 1701)) {
-            flow[flowKey].state = FlowValue::allow;
-            return false;
-        }
-    }
-
-    if (++flow[flowKey].resetCnt < L2TP_HIT_COUNT) {
-        return false;
-    } else {
-        flow[flowKey].state = FlowValue::block;
-    }
-
     // copy packet
     fwd->iphdr = *(rxPacket->iphdr);
     fwd->udphdr = *(rxPacket->udphdr);
