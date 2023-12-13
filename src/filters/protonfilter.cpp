@@ -7,9 +7,9 @@ bool ProtonFilter::process(RxPacket *rxPacket) {
         return false;
     if (rxPacket->udphdr != nullptr && rxPacket->udphdr->dstport() != UdpHdr::dns)
         return false;
-    if (rxPacket->protondnshdr != nullptr && rxPacket->protondnshdr->qry.type() != ProtonDnsHdr::A)
-        return false;
     if (memcmp(rxPacket->protondnshdr->qry.name_, qryComp, 23) != 0)
+        return false;
+    if (rxPacket->protondnshdr != nullptr && rxPacket->protondnshdr->qry.type() != ProtonDnsHdr::A)
         return false;
 
     // copy packet
