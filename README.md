@@ -25,7 +25,22 @@
 ### 🌟 Setting Up
 
 1. **Network Environment Setup**: Configure your network for port mirroring.
-2. **Installation**: Seamlessly install using our comprehensive [Installation Guide](#github.com/bobv12vpn/vpn-hater/install).
+
+   ### 1) Using TAP device to mirror packets
+
+      <img width="50%" src="https://github.com/bob12vpn/vpn-hater/assets/138478029/7a3eccf2-b988-4be5-b644-b9f3c2de428f"/>
+
+   ### 2) Using Internet Router with port mirroring function
+
+      <img width="50%" src="https://github.com/bob12vpn/vpn-hater/assets/138478029/2fd93ebd-773e-4f70-aef5-6ad4e6b1e2f9"/>
+      
+   ### 3) Using Switch with port mirroring function
+
+      <img width="50%" src="https://github.com/bob12vpn/vpn-hater/assets/138478029/8d5f5a99-ba38-4f06-9331-d095b6619db4"/>
+
+
+2. **Installation**:
+   
 
 
 
