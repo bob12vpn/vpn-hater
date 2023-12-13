@@ -93,6 +93,6 @@ _Include captivating images or screenshots showcasing the system in action._
 
 ---
 
-**⚠️ Notes**:
+**⚠️ To Do**:
 - Replace `#installation-guide-link`, `#change-log-link`, and `#additional-resources-link` with actual URLs.
 - Complete the License table with appropriate details.
