@@ -1,10 +1,11 @@
 #include "filtermanager.h"
 
 FilterManager::FilterManager() {
-    push_back(&openVpnTcpFilter);
-    push_back(&sniFilter);
-    push_back(&pptpFilter);
     push_back(&l2tpFilter);
+    push_back(&openVpnTcpFilter);
+    push_back(&pptpFilter);
+    push_back(&protonFilter);
+    push_back(&sniFilter);
     // push_back(&tcpAckFilter);
 }
 
