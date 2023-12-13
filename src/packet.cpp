@@ -34,9 +34,6 @@ void RxPacket::parse() {
             if (ppphdr->protocol() == PppHdr::lcp) {
                 lcphdr = (struct LcpHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize() + UDP_SIZE + L2TP_SIZE + PPP_SIZE);
             }
-            if (udphdr->dstport() == UdpHdr::dns) {
-                protondnshdr = (struct ProtonDnsHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize() + UDP_SIZE);
-            }
             break;
         case IpHdr::gre:
             grehdr = (struct GreHdr *)(packet + ETH_SIZE + iphdr->ipHdrSize());

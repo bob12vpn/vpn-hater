@@ -16,7 +16,6 @@
 #include "headers/l2tphdr.h"
 #include "headers/openvpntcphdr.h"
 #include "headers/openvpnudphdr.h"
-#include "headers/protondnshdr.h"
 #include "headers/tlshdr.h"
 
 #include "headers/lcphdr.h"
@@ -46,7 +45,6 @@ struct RxPacket {
     struct L2tpHdr *l2tphdr{nullptr};
     struct OpenVpnTcpHdr *openvpntcphdr{nullptr};
     struct OpenVpnUdpHdr *openvpnudphdr{nullptr};
-    struct ProtonDnsHdr *protondnshdr{nullptr};
     struct TlsHdr *tlshdr{nullptr};
 
     struct LcpHdr *lcphdr{nullptr};
@@ -65,7 +63,6 @@ struct RxPacket {
         l2tphdr = nullptr;
         openvpntcphdr = nullptr;
         openvpnudphdr = nullptr;
-        protondnshdr = nullptr;
 
         lcphdr = nullptr;
     }
@@ -95,12 +92,6 @@ struct TxL2tpPacket {
     struct L2tpHdr l2tphdr;
     struct PppHdr ppphdr;
     struct LcpHdr lcphdr;
-};
-
-struct TxProtonDnsPacket {
-    struct IpHdr iphdr;
-    struct UdpHdr udphdr;
-    struct ProtonDnsHdr protondnshdr;
 };
 
 #pragma pack(pop)
