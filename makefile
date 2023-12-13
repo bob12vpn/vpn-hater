@@ -1,4 +1,4 @@
-TARGET=vpnblock-packet-injection
+TARGET=vpn-hater
 SRCDIR=./src
 SRCHDRDIR=./src/headers
 SRCFILDIR=./src/filters
