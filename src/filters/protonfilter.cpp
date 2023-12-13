@@ -5,9 +5,11 @@ bool ProtonFilter::process(RxPacket *rxPacket) {
         return false;
     if (rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::udp)
         return false;
-    if (rxPacket->udphdr != nullptr && rxPacket->udphdr->srcport() != UdpHdr::dns)
+    if (rxPacket->udphdr != nullptr && rxPacket->udphdr->dstport() != UdpHdr::dns)
         return false;
     if (rxPacket->protondnshdr != nullptr && rxPacket->protondnshdr->qry.type() != ProtonDnsHdr::A)
+        return false;
+    if (memcmp(rxPacket->protondnshdr->qry.name_, qryComp, 23) != 0)
         return false;
 
     // copy packet
