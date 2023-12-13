@@ -40,6 +40,14 @@
 
 
 2. **Installation**:
+      ```c++
+      git clone https://github.com/bob12vpn/vpn-hater.git
+      sudo apt install build-essential
+      sudo apt install libpcap-dev
+      make
+      ```
+
+      
    
 
 
