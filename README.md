@@ -80,5 +80,5 @@
 
 ## 📸 Example Usage
 
-![image](https://github.com/bob12vpn/vpn-hater/assets/68684722/247dcecb-5d5f-4bd8-8e42-8885a232993a)
+![image](https://github.com/bob12vpn/vpn-hater/assets/47083922/c9c68c8e-7714-4560-aadb-8c6dd92c9187)
 
