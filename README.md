@@ -6,7 +6,7 @@
 
 ## Environment
 
-- Ubuntu 18, 20, 22
+- Linux
 
 ---
 
