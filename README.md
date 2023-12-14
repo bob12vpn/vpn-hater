@@ -47,7 +47,18 @@
       make
       ```
 
+3. **Execution**:
+      - command
+   
+      ```bash
+      $ sudo ./vpn-hater <mirror interface> <send interface> [sni list txt]
+      ```
       
+      - example
+   
+      ```bash
+      $ sudo ./vpn-hater eth0 wlan0 sni.txt
+      ```
    
 
 
