@@ -74,21 +74,7 @@
 
 ## 📬 Support
 
-🤝 For assistance, contact us at: [kusti0base@gmail.com](mailto:kusti0base@gmail.com)
-
----
-
-## 📜 License
-
-| Name | License | Copyright |
-|------|---------|-----------|
-| _Your Library Names Here_ | _Licenses_ | _Copyright Info_ |
-
----
-
-## 📅 Change Log
-
-🔍 Dive into our [Change Log](#change-log-link) for detailed updates.
+🤝 For assistance, contact us at: [do901328@gmail.com](mailto:do901328@gmail.com)
 
 ---
 
@@ -96,15 +82,3 @@
 
 ![image](https://github.com/bob12vpn/vpn-hater/assets/68684722/247dcecb-5d5f-4bd8-8e42-8885a232993a)
 
-
----
-
-## 🔗 Additional Resources
-
-- 📚 Explore [VPN Information and Documentation](#additional-resources-link) for in-depth knowledge.
-
----
-
-**⚠️ To Do**:
-- Replace `#installation-guide-link`, `#change-log-link`, and `#additional-resources-link` with actual URLs.
-- Complete the License table with appropriate details.
