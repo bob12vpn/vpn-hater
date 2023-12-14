@@ -83,7 +83,8 @@
 
 ## 📸 Example Usage
 
-_Include captivating images or screenshots showcasing the system in action._
+![image](https://github.com/bob12vpn/vpn-hater/assets/68684722/247dcecb-5d5f-4bd8-8e42-8885a232993a)
+
 
 ---
 
