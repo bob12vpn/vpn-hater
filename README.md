@@ -1,5 +1,9 @@
 # 🛡️ VPN-Hater
 
+<img width="20%" src="https://github.com/bob12vpn/vpn-hater/assets/138478029/6ca6c135-f245-4222-a863-dd0168a602e6"/>
+
+
+
 🌐 **VPN-Hater** is an innovative, open-source solution aimed at enhancing network security by blocking VPN connections. Distinguished from traditional inline methods, VPN-Hater is both reliable and cost-effective, ensuring uninterrupted network performance even in high-traffic scenarios.
 
 ---
