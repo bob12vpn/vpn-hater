@@ -5,32 +5,12 @@ bool OpenVpnTcpFilter::process(RxPacket *rxPacket) {
         return false;
     if (rxPacket->iphdr != nullptr && rxPacket->iphdr->proto() != IpHdr::tcp)
         return false;
-
-    flowKey.init(rxPacket);
-    if (flow.find(flowKey) == flow.end()) {
-        flow.insert({flowKey, {0, FlowValue::unknown}});
-    }
-
-    if (flow[flowKey].state == FlowValue::allow) {
+    if (rxPacket->tcphdr != nullptr && rxPacket->tcphdr->flags() != (TcpHdr::flagsPsh | TcpHdr::flagsAck))
         return false;
-    } else if (flow[flowKey].state == FlowValue::unknown) {
-        if (rxPacket->tcphdr != nullptr && rxPacket->tcphdr->flags() != (TcpHdr::flagsPsh | TcpHdr::flagsAck))
-            return false;
-        if (rxPacket->openvpntcphdr != nullptr && rxPacket->tcphdr->payloadLen(rxPacket->iphdr, rxPacket->tcphdr) != rxPacket->openvpntcphdr->plen() + 2) {
-            flow[flowKey].state = FlowValue::allow;
-            return false;
-        }
-        if (rxPacket->openvpntcphdr->type() != 0x48) {
-            flow[flowKey].state = FlowValue::allow;
-            return false;
-        }
-    }
-
-    if (++flow[flowKey].resetCnt < OPENVPNTCP_HIT_COUNT) {
+    if (rxPacket->openvpntcphdr != nullptr && rxPacket->tcphdr->payloadLen(rxPacket->iphdr, rxPacket->tcphdr) != rxPacket->openvpntcphdr->plen() + 2)
         return false;
-    } else {
-        flow[flowKey].state = FlowValue::block;
-    }
+    if (rxPacket->openvpntcphdr->type() != 0x48)
+        return false;
 
     // copy packet
     fwd->iphdr = bwd->iphdr = *(rxPacket->iphdr);
