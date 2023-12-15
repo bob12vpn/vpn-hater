@@ -1,6 +1,6 @@
 # 🛡️ VPN-Hater
 
-<img width="20%" src="https://github.com/bob12vpn/vpn-hater/assets/138478029/ce4d58ff-21af-4370-9cae-0cb54fb82a45"/>
+<img width="30%" src="https://github.com/bob12vpn/vpn-hater/assets/138478029/bc086d3a-a598-46eb-a56b-54ee4e0324fd"/>
 
 
 
